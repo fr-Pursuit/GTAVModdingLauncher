@@ -1,0 +1,18 @@
+﻿<Window x:Class="GTAVModdingLauncher.Popup.PopupVerifyIntegrity"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:PursuitLib.Wpf;assembly=PursuitLib"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Closing="OnPopupClosing"
+        Icon="/GTAVModdingLauncher;component/icon.ico"
+        Title="{p:I18n}" Width="250" Height="125">
+    <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Label Name="State" Content="{p:I18n VerifyingGame}" />
+        <ProgressBar Name="Bar" Width="230" Height="20" IsIndeterminate="True"/>
+        <Button Content="{p:I18n Abort}" Margin="3,10,3,3" Width="70" HorizontalAlignment="Right" Click="Abort" />
+    </StackPanel>
+</Window>

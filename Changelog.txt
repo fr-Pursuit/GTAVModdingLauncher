@@ -1,0 +1,28 @@
+__0.5.1__
+* Progress bar enhancements
++ You can now change the game's language in the launcher settings
+
+__0.5.0__
+* The launcher now uses WPF
+- Removed launcherResources.zip, the resources are now embedded in the .exe file
+* The settings menu is now more compact
+* Localization system improved
+* The launcher now only detects Steam files when it's running with the Steam version of the game
+* The crash reporter has been redone
+* Several bugfixes
++ The launcher can now scan for modded x64.rpf files
+
+__0.4.0__
+
+* Log system enhancements
+* Fixed popups position
+* Fixed error messages
++ Profiles can now be stored in a custom folder
++ The user can now choose whether to play on a modded profile in offline mode or not
+
+__0.3.1__
+* Fixed the title
+* Fixed a crash that could occur when the "GTA V Modding Launcher" folder doesn't exist
+
+__0.3.0__
++ Initial public release

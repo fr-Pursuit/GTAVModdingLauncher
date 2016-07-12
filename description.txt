@@ -1,0 +1,16 @@
+This launcher allows you to easily switch between several "profiles" of GTA V automatically.
+A profile can be compared to a folder state: it can contain a set of mods, or it can only contain vanilla files (in that case the profile is considered as "empty")
+By default, the launcher has one defined profile: the "Vanilla" one, which is a state where no mods are present (useful when you want to play Online for example). The "Vanilla" profile cannot be edited nor deleted.
+When you first launch the launcher, if your GTA V folder contains mods, if will create another profile called "Modded", which contains the mods you installed at this moment. Switching to the "Vanilla" one will remove all the mods, and allow you to play online. However, the mods are not lost. Switching back to the "Modded" profile will restaure them.
+You can create as many profiles as you want, rename them, and delete them.
+
+
+<b>How does it work ?</b>
+
+The launcher searches for modded files using a hardcoded list of vanilla files. When you switch profiles, it moves the mods present in GTA V to an external folder, then moves the files present in another external folder to the game. You don't need several "Grand Theft Auto V" folders anymore !
+
+<b>Note</b>: This launcher doesn't support modded vanilla files. If you want to modify vanilla .rpf files, please use OpenIV.asi and the "mods" folder.
+
+<b>Note2</b>: This launcher doesn't need to be installed in a particular location. You only need to put the 3 files included in the archive in the same folder. It can be installed in the "Grand Theft Auto V" directory, in that case it'll include itself in the vanilla files list.
+
+<b>Note3</b>: This is actually my first C# project, so, several bugs are probably present. If you found one, please report it in the comment section. Please include the crash-date-of-the-crash.txt and latest.log (both are in My Documents\Pursuit\GTA V Modding Launcher\).

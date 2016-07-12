@@ -1,0 +1,27 @@
+﻿<Window x:Class="GTAVModdingLauncher.Popup.PopupCreate"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:PursuitLib.Wpf;assembly=PursuitLib"
+        mc:Ignorable="d"
+        KeyDown="OnKeyDown"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Icon="/GTAVModdingLauncher;component/icon.ico"
+        Title="{p:I18n}" Width="250" Height="125">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label Content="{p:I18n ProfileName}" />
+            <TextBox Name="ProfileName" Width="130" Height="20"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Button Content="{p:I18n Save}" Margin="3" Width="70" Click="Save"/>
+            <Button Content="{p:I18n Cancel}" Margin="3" Width="70" Click="Cancel"/>
+        </StackPanel>
+    </Grid>
+</Window>
