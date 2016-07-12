@@ -26,7 +26,6 @@ namespace GTAVModdingLauncher
 					this.windowTitle = value;
 					this.NotifyPropertyChanged("WindowTitle");
 				}
-				else this.windowTitle = value;
 			}
 		}
 
@@ -41,7 +40,6 @@ namespace GTAVModdingLauncher
 					this.windowBackground = value;
 					this.NotifyPropertyChanged("WindowBackground");
 				}
-				else this.windowBackground = value;
 			}
 		}
 
@@ -56,7 +54,6 @@ namespace GTAVModdingLauncher
 					this.buttonsEnabled = value;
 					this.NotifyPropertyChanged("ButtonsEnabled");
 				}
-				else this.buttonsEnabled = value;
 			}
 		}
 
@@ -71,7 +68,6 @@ namespace GTAVModdingLauncher
 					this.canPlayOnline = value;
 					this.NotifyPropertyChanged("CanPlayOnline");
 				}
-				else this.canPlayOnline = value;
 			}
 		}
 
@@ -88,7 +84,6 @@ namespace GTAVModdingLauncher
 					this.selectedProfile = value;
 					this.NotifyPropertyChanged("SelectedProfile");
 				}
-				else this.selectedProfile = value;
 			}
 		}
 
@@ -105,7 +100,6 @@ namespace GTAVModdingLauncher
 					this.launcherVersion = value;
 					this.NotifyPropertyChanged("LauncherVersion");
 				}
-				else this.launcherVersion = value;
 			}
 		}
 
@@ -120,7 +114,6 @@ namespace GTAVModdingLauncher
 					this.gtaVersion = value;
 					this.NotifyPropertyChanged("GtaVersion");
 				}
-				else this.gtaVersion = value;
 			}
 		}
 
@@ -135,7 +128,6 @@ namespace GTAVModdingLauncher
 					this.gtaType = value;
 					this.NotifyPropertyChanged("GtaType");
 				}
-				else this.gtaType = value;
 			}
 		}
 
