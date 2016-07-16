@@ -9,7 +9,7 @@
         ResizeMode="NoResize"
         KeyDown="OnKeyDown"
         Icon="/GTAVModdingLauncher;component/icon.ico"
-        Title="{p:I18n}" Width="350" Height="305">
+        Title="{p:I18n}" Width="350" Height="330">
     <Grid Margin="3">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -37,6 +37,7 @@
                 </Button>
             </StackPanel>
             <Button Content="{p:I18n Verify}" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="3" Width="150" Click="Verify"/>
+            <Button Content="{p:I18n CheckUpdates}" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="3" Width="150" Click="CheckForUpdates"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center">
             <Button Content="{p:I18n Save}" Margin="3" Width="70" Click="Save"/>

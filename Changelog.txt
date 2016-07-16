@@ -1,6 +1,8 @@
 __0.5.1__
 * Progress bar enhancements
 + You can now change the game's language in the launcher settings
+* The user can now disable logging
++ Added an update check
 
 __0.5.0__
 * The launcher now uses WPF

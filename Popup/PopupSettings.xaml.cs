@@ -6,6 +6,8 @@ using PursuitLib;
 using PursuitLib.Wpf;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Threading;
+using Newtonsoft.Json.Linq;
 
 namespace GTAVModdingLauncher.Popup
 {
@@ -16,6 +18,7 @@ namespace GTAVModdingLauncher.Popup
 	{
 		private static Dictionary<string, string> supportedGtaLanguages = null;
 
+		private delegate void Callback();
 		private string OldLanguage;
 		private string OldFolder;
 
@@ -160,6 +163,26 @@ namespace GTAVModdingLauncher.Popup
 		{
 			if(e.Key == Key.Return)
 				this.Save(null, null);
+		}
+
+		private void CheckForUpdates(object sender, RoutedEventArgs e)
+		{
+			Launcher.Instance.CurrentThread = new Thread(VerifyUpdates);
+			Launcher.Instance.CurrentThread.Start();
+		}
+
+		private void VerifyUpdates()
+		{
+			JObject obj = Launcher.Instance.IsUpToDate();
+
+			if(obj != null)
+				Launcher.Instance.ShowUpdatePopup(this, obj);
+			else this.Dispatcher.Invoke(new Callback(ShowUpToDatePopup));
+		}
+
+		private void ShowUpToDatePopup()
+		{
+			Messages.Show(this, "UpToDate", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 	}
 }

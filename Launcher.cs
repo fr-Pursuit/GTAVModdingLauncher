@@ -10,6 +10,9 @@ using System.Collections.Generic;
 using GTAVModdingLauncher.Popup;
 using System.Windows;
 using System.ComponentModel;
+using System.Net;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace GTAVModdingLauncher
 {
@@ -24,6 +27,7 @@ namespace GTAVModdingLauncher
 		private delegate void DoubleCallback(double value);
 		private delegate void BoolCallback(bool value);
 		private delegate void BoolIntCallback(bool value, int intValue);
+		private delegate void UpdateCallback(Window window, JObject obj);
 
 		public MainWindow Window { get; internal set; } = null;
 		public string UserDirPath { get; internal set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pursuit\\GTA V Modding Launcher");
@@ -201,6 +205,8 @@ namespace GTAVModdingLauncher
 					Log.Info("The game's integrity has not been verified.");
 					this.Window.Dispatcher.Invoke(new Callback(AskForIntegrityCheck));
 				}
+				else if(this.Settings.CheckUpdates)
+					this.CheckUpdates();
 			}
 		}
 
@@ -218,6 +224,67 @@ namespace GTAVModdingLauncher
 				this.Settings.IntegrityVerified = true;
 				this.SaveSettings();
 			}
+
+			if(this.Settings.CheckUpdates)
+			{
+				this.CurrentThread = new Thread(CheckUpdates);
+				this.CurrentThread.Start();
+			}
+		}
+
+		private void CheckUpdates()
+		{
+			JObject obj = this.IsUpToDate();
+			if(obj != null)
+				this.Window.Dispatcher.Invoke(new UpdateCallback(ShowUpdatePopup), this.Window, obj);
+		}
+
+
+		/// <summary>
+		/// Checks whether the software is up to date or not
+		/// </summary>
+		/// <returns>A JObject representing the latest update, or null if it's up to date</returns>
+		public JObject IsUpToDate()
+		{
+			HttpWebRequest request = WebRequest.CreateHttp("https://api.github.com/repos/fr-Pursuit/GTAVModdingLauncher/releases/latest");
+			request.UserAgent = "GTAVModdingLauncher-" + Version;
+
+			using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+			{
+				if(response.StatusCode == HttpStatusCode.OK)
+				{
+					using(StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+					using(JsonReader reader = new JsonTextReader(streamReader))
+					{
+						JObject obj = JObject.Load(reader);
+						if(new Version(obj["tag_name"].ToString()) > Version)
+						{
+							Log.Info("New update found ("+obj["name"]+')');
+							return obj;
+						}
+					}
+				}
+				else Log.Warn("Unable to check for updates. Response code was " + response.StatusCode+" ("+response.StatusDescription+')');
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Shows a popup telling the user a new update is out.
+		/// </summary>
+		/// <param name="obj">A JObject representing the update</param>
+		public void ShowUpdatePopup(Window window, JObject obj)
+		{
+			if(this.Window.CheckAccess())
+			{
+				if(Messages.Show(window, "Update", "Update", MessageBoxButton.YesNo, MessageBoxImage.Information, obj["name"], obj["body"]) == MessageBoxResult.Yes)
+				{
+					Process.Start(obj["assets"][0]["browser_download_url"].ToString());
+					this.CloseLauncher();
+				}
+			}
+			else this.Window.Dispatcher.Invoke(new UpdateCallback(ShowUpdatePopup), window, obj);
 		}
 
 		private void LoadSettings()
