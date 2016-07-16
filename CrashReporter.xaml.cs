@@ -9,8 +9,8 @@ namespace GTAVModdingLauncher
 {
 	public partial class CrashReporter : Window
 	{
-		private const string ReportSite = "www.gta5-mods.com";
-		private const string ReportURL = "https://www.gta5-mods.com/tools/gta-v-modding-launcher";
+		private const string ReportSite = "github.com";
+		private const string ReportURL = "https://github.com/fr-Pursuit/GTAVModdingLauncher/issues/new";
 
 		private readonly Exception exception;
 
