@@ -1,4 +1,4 @@
-﻿MIT License
+﻿GTA V Modding Launcher is using the MIT License
 
 Copyright © 2016 Pursuit
 
