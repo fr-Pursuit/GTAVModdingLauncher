@@ -117,6 +117,14 @@ namespace GTAVModdingLauncher
 						if(Instance.GtaPath != null)
 							Instance.GtaPath = Instance.GtaPath.Substring(0, Instance.GtaPath.Length - 4);
 					}
+
+					if(Instance.GtaPath == null)
+					{
+						string path = Path.Combine(Instance.SteamPath, "steamapps\\common\\Grand Theft Auto V");
+
+						if(File.Exists(Path.Combine(path, "gta5.exe")))
+							Instance.GtaPath = path;
+					}
 				}
 			}
 

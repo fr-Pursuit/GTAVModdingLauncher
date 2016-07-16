@@ -3,6 +3,8 @@ __0.5.1__
 + You can now change the game's language in the launcher settings
 * The user can now disable logging
 + Added an update check
+* The crash reporter uses github now
+* (hopefully) fixed an issue with some Steam users ("No GTA installation found.")
 
 __0.5.0__
 * The launcher now uses WPF
