@@ -13,6 +13,8 @@ namespace GTAVModdingLauncher
 		public bool UseRph { get; set; }
 		public bool DeleteLogs { get; set; } 
 		public bool OfflineMode { get; set; }
+		public bool CheckUpdates { get; set; }
+		public bool UseLogFile { get; set; }
 		public bool IntegrityVerified { get; set; }
 		public string CustomFolder { get; set; }
 		public string Language { get; set; }
@@ -23,6 +25,8 @@ namespace GTAVModdingLauncher
 			this.UseRph = true;
 			this.DeleteLogs = false;
 			this.OfflineMode = true;
+			this.CheckUpdates = true;
+			this.UseLogFile = true;
 			this.IntegrityVerified = false;
 			this.CustomFolder = null;
 

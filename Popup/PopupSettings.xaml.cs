@@ -50,6 +50,8 @@ namespace GTAVModdingLauncher.Popup
 			this.UseRph.IsChecked = Launcher.Instance.Settings.UseRph;
 			this.Delete.IsChecked = Launcher.Instance.Settings.DeleteLogs;
 			this.Offline.IsChecked = Launcher.Instance.Settings.OfflineMode;
+			this.CheckUpdates.IsChecked = Launcher.Instance.Settings.CheckUpdates;
+			this.UseLogFile.IsChecked = Launcher.Instance.Settings.UseLogFile;
 			this.ProfileFolder.Text = Launcher.Instance.Settings.GetProfileFolder();
 			this.UseFolder.IsChecked = Launcher.Instance.Settings.CustomFolder != null;
 			this.UseFolderCheckedChange(null, null);
@@ -103,11 +105,26 @@ namespace GTAVModdingLauncher.Popup
 			Launcher.Instance.Settings.UseRph = (bool)this.UseRph.IsChecked;
 			Launcher.Instance.Settings.DeleteLogs = (bool)this.Delete.IsChecked;
 			Launcher.Instance.Settings.OfflineMode = (bool)this.Offline.IsChecked;
+			Launcher.Instance.Settings.CheckUpdates = (bool)this.CheckUpdates.IsChecked;
+			Launcher.Instance.Settings.UseLogFile = (bool)this.UseLogFile.IsChecked;
 			Launcher.Instance.Settings.CustomFolder = (bool)this.UseFolder.IsChecked && this.ProfileFolder.Text != Launcher.Instance.UserDirPath ? this.ProfileFolder.Text : null;
 			Launcher.Instance.Settings.Language = I18n.SupportedLanguages[this.Languages.SelectedIndex];
 			Launcher.Instance.Settings.GtaLanguage = this.GetSupportedGtaLanguages()[(string)this.GtaLanguages.SelectedItem];
 
 			Launcher.Instance.SaveSettings();
+
+			if(Log.HasLogFile() && !Launcher.Instance.Settings.UseLogFile)
+			{
+				Log.Info("The user chose to disable logging.");
+				Log.RemoveLogFile();
+			}
+			else if(!Log.HasLogFile() && Launcher.Instance.Settings.UseLogFile)
+			{
+				Log.SetLogFile(Path.Combine(Launcher.Instance.UserDirPath, "latest.log"));
+				Log.Info("GTA V Modding Launcher " + Launcher.Version);
+				Log.Info("Using PursuitLib " + Versions.GetTypeVersion(typeof(Log)));
+				Log.Info("The user chose to enable logging.");
+			}
 
 			if(Launcher.Instance.Settings.GetProfileFolder() != this.OldFolder)
 			{

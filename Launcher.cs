@@ -45,14 +45,16 @@ namespace GTAVModdingLauncher
 			Instance = this;
 			this.Window = window;
 
-			Log.SetLogFile(Path.Combine(UserDirPath, "latest.log"));
+			this.LoadSettings();
+
+			if(this.Settings.UseLogFile)
+				Log.SetLogFile(Path.Combine(UserDirPath, "latest.log"));
 			Log.Info("GTA V Modding Launcher " + Version);
 			Log.Info("Using PursuitLib " + Versions.GetTypeVersion(typeof(Log)));
 
-			Log.Info("Loading user settings and languages...");
+			Log.Info("Loading languages...");
 			I18n.SupportedLanguages.Add("en-US");
 			I18n.SupportedLanguages.Add("fr-FR");
-			this.LoadSettings();
 			I18n.LoadLanguage(this.Settings.Language);
 		}
 

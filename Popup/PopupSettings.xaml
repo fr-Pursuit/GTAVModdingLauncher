@@ -9,7 +9,7 @@
         ResizeMode="NoResize"
         KeyDown="OnKeyDown"
         Icon="/GTAVModdingLauncher;component/icon.ico"
-        Title="{p:I18n}" Width="350" Height="255">
+        Title="{p:I18n}" Width="350" Height="305">
     <Grid Margin="3">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -27,6 +27,8 @@
             <CheckBox Name="UseRph" Content="{p:I18n UseRph}" Margin="3,5,0,5"/>
             <CheckBox Name="Delete" Content="{p:I18n DeleteLogs}" Margin="3,5,0,5"/>
             <CheckBox Name="Offline" Content="{p:I18n OfflineMode}" Margin="3,5,0,5"/>
+            <CheckBox Name="CheckUpdates" Content="{p:I18n CheckUpdates}" Margin="3,5,0,5"/>
+            <CheckBox Name="UseLogFile" Content="{p:I18n UseLogFile}" Margin="3,5,0,5"/>
             <StackPanel Orientation="Horizontal">
                 <CheckBox Name="UseFolder" Content="{p:I18n CustomFolder}" Checked="UseFolderCheckedChange" Unchecked="UseFolderCheckedChange" Margin="3,5,3,5" />
                 <TextBox Name="ProfileFolder" Width="150" Height="20" />
