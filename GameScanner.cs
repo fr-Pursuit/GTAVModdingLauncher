@@ -86,7 +86,6 @@ namespace GTAVModdingLauncher
 				Log.Info("The launcher is running in the GTA V directory. Adding it to the vanilla files.");
 				vanillaEntries.Add("pursuitlib.dll");
 				vanillaEntries.Add("Newtonsoft.Json.dll");
-				vanillaEntries.Add("Newtonsoft.Json.xml");
 				vanillaEntries.Add("License.txt");
 				vanillaEntries.Add(Path.GetFileName(process.MainModule.FileName.ToLower()));
 			}
