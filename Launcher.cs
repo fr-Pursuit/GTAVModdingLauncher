@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Windows.Controls;
 
 namespace GTAVModdingLauncher
 {
@@ -77,7 +78,7 @@ namespace GTAVModdingLauncher
 			this.Window.FolderButton.Click += OpenProfileFolder;
 			this.Window.DeleteButton.Click += DeleteSelectedProfile;
 			this.Window.PlayButton.Click += PressPlay;
-			this.Window.PlayOnlineButton.Click += PressPlayOnline;
+			this.Window.PlayOnlineButton.Click += PressPlay;
 			this.UiManager = new UIManager(this.Window);
 			this.UiManager.WindowTitle += " " + Version + " " + Versions.GetVersionType(Version);
 
@@ -666,7 +667,8 @@ namespace GTAVModdingLauncher
 
 		private void PressPlay(object sender, EventArgs e)
 		{
-			Log.Info("Starting normal game launch process...");
+			bool online = ((Button)sender).Name == "PlayOnlineButton";
+			Log.Info("Starting "+(online ? "online" : "normal")+" game launch process...");
 
 			if(this.UiManager.SelectedProfile != this.Profiles.CurrentProfile)
 			{
@@ -677,24 +679,7 @@ namespace GTAVModdingLauncher
 			this.UiManager.ButtonsEnabled = false;
 			this.UiManager.CanPlayOnline = false;
 			int index = this.UiManager.SelectedProfile;
-			this.CurrentThread = new Thread(() => SwitchProfileAndPlay(false, index));
-			this.CurrentThread.Start();
-		}
-
-		private void PressPlayOnline(object sender, EventArgs e)
-		{
-			Log.Info("Starting online game launch process...");
-
-			if(this.UiManager.SelectedProfile != this.Profiles.CurrentProfile)
-			{
-				this.UiManager.Working = true;
-				this.UiManager.ProgressIndeterminate = true;
-			}
-
-			this.UiManager.ButtonsEnabled = false;
-			this.UiManager.CanPlayOnline = false;
-			int index = this.UiManager.SelectedProfile;
-			this.CurrentThread = new Thread(() => SwitchProfileAndPlay(true, index));
+			this.CurrentThread = new Thread(() => SwitchProfileAndPlay(online, index));
 			this.CurrentThread.Start();
 		}
 
