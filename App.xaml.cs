@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -32,7 +33,7 @@ namespace GTAVModdingLauncher
 			catch(IOException)
 			{
 				MessageBox.Show("Unable to load " + assemblyName, "Fatal error", MessageBoxButton.OK, MessageBoxImage.Error);
-				Environment.Exit(1);
+				Process.GetCurrentProcess().Kill();
 				return null;
 			}
 		}
