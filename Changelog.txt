@@ -1,3 +1,6 @@
+__0.5.3__
+* Fixed a crash that could happen when starting the launcher
+
 __0.5.2__
 * Fixed a bug that prevented the launcher from working in the GTA V directory
 * Newtonsoft.Json.dll is now embedded.
