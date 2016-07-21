@@ -165,7 +165,7 @@ namespace GTAVModdingLauncher
 						Instance.createDefaultProfiles();
 					}
 
-					UpdateUI();
+					this.Window.Dispatcher.Invoke(new Callback(UpdateUI));
 				}
 				else
 				{
@@ -212,10 +212,13 @@ namespace GTAVModdingLauncher
 				if(!this.Settings.IntegrityVerified)
 				{
 					Log.Info("The game's integrity has not been verified.");
-					this.Window.Dispatcher.Invoke(new Callback(AskForIntegrityCheck));
+					this.AskForIntegrityCheck();
 				}
 				else if(this.Settings.CheckUpdates)
-					this.CheckUpdates();
+				{
+					this.CurrentThread = new Thread(CheckUpdates);
+					this.CurrentThread.Start();
+				}
 			}
 		}
 
