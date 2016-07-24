@@ -1,5 +1,5 @@
 __0.5.4__
-* Fixed a crash that occured when starting the game after deleting a profile
+* Fixed a crash that occured when starting the game after deleting a profile (#1 and #2)
 * Fixed a wrong message that was displayed when the game's integrity was compromised
 
 __0.5.3__
