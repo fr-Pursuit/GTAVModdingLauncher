@@ -209,6 +209,23 @@ namespace GTAVModdingLauncher
 				I18n.Reload += OnI18nReload;
 				this.OnI18nReload(null, null);
 
+				if(this.Profiles.CurrentProfile >= this.Profiles.Count)
+				{
+					string name = this.GetNewProfileName();
+					string path = Path.Combine(this.Settings.GetProfileFolder(), name);
+
+					if(!Directory.Exists(path))
+						Directory.CreateDirectory(path);
+
+					this.Profiles.Add(name);
+					this.Profiles.CurrentProfile = this.Profiles.Count - 1;
+					this.UiManager.Profiles.Add(name);
+					this.UiManager.SelectedProfile = this.Profiles.CurrentProfile;
+					this.SaveProfiles();
+
+					Messages.Show(this.Window, "InvalidActiveProfile", "Warn", MessageBoxButton.OK, MessageBoxImage.Warning, name);
+				}
+
 				if(!this.Settings.IntegrityVerified)
 				{
 					Log.Info("The game's integrity has not been verified.");
@@ -756,7 +773,6 @@ namespace GTAVModdingLauncher
 					if(Directory.Exists(Path.Combine(this.Settings.GetProfileFolder(),  selected)))
 						IOUtils.DeleteDirectory(Path.Combine(this.Settings.GetProfileFolder(), selected));
 					this.Profiles.Remove(selected);
-					this.UiManager.SelectedProfile = 0;
 					this.UiManager.Profiles.Remove(selected);
 
 					if(index == this.Profiles.CurrentProfile)
@@ -767,6 +783,9 @@ namespace GTAVModdingLauncher
 						if(!popup.CreatedModdedState)
 							this.Profiles.CurrentProfile = 0;
 					}
+					else if(index < this.Profiles.CurrentProfile)
+						this.Profiles.CurrentProfile--;
+					this.UiManager.SelectedProfile = this.Profiles.CurrentProfile;
 					
 					this.SaveProfiles();
 				}

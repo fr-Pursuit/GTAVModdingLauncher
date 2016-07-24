@@ -74,6 +74,7 @@ Popup.IntegrityVerified=The game's integrity has been verified successfully.
 Popup.IntegrityFalse=The game's integrity could not be verified. Please make sure your x64.rpf files are not modded and try again.
 Popup.Update=A new update is available.\n\n{0}\n\nChangelog:\n{1}\n\nDo you want to download it ?
 Popup.UpToDate=The launcher is up to date.
+Popup.InvalidActiveProfile=The active profile is invalid. It has been changed to {0}.
 CrashReporter.Title=Crash report
 Label.CrashReport=The program has encountered an unexpected error and cannot continue.\nPlease report the following error at {0}. Sorry for any inconvenience caused.
 Random.Loading=Loading...
