@@ -119,7 +119,7 @@ namespace GTAVModdingLauncher.Popup
 				}
 				else
 				{
-					if(Messages.Show(this, "IntegrityNotVerified", "Warn", MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK)
+					if(Messages.Show(this, "IntegrityFalse", "Warn", MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK)
 					{
 						this.State.Content = I18n.Localize("Label", "VerifyingGame");
 						this.Bar.Value = 0;
