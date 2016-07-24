@@ -29,6 +29,7 @@ namespace GTAVModdingLauncher
 		public static void Init()
 		{
 			Log.Info("Initializing the game scanner...");
+			Log.Info("Registering common files...");
 
 			vanillaEntries.Add("readme");
 			vanillaEntries.Add("update");
@@ -72,6 +73,8 @@ namespace GTAVModdingLauncher
 
 			if(Launcher.Instance.IsSteamVersion())
 			{
+				Log.Info("Registering Steam files...");
+
 				vanillaEntries.Add("_commonredist");
 				vanillaEntries.Add("installers");
 				vanillaEntries.Add("installscript.vdf");
@@ -83,7 +86,7 @@ namespace GTAVModdingLauncher
 
 			if(parent != null && parent.ToString() == Launcher.Instance.GtaPath)
 			{
-				Log.Info("The launcher is running in the GTA V directory. Adding it to the vanilla files.");
+				Log.Info("The launcher is running in the GTA V directory. Registering it...");
 				vanillaEntries.Add("pursuitlib.dll");
 				vanillaEntries.Add("license.txt");
 				vanillaEntries.Add(Path.GetFileName(process.MainModule.FileName.ToLower()));
