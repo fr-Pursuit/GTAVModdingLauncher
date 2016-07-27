@@ -558,14 +558,7 @@ namespace GTAVModdingLauncher
 
 						foreach(string mod in dlcMods)
 						{
-							if(File.Exists(mod))
-							{
-								string name = mod.Replace(this.GtaPath, profilePath);
-								if(File.Exists(name))
-									File.Delete(name);
-								File.Move(mod, name);
-							}
-							else IOUtils.MoveDirectory(mod, profilePath, false);
+							IOUtils.MoveDirectory(mod, mod.Replace(this.GtaPath, profilePath), false);
 							this.IncrProgressBarValue();
 						}
 					}
