@@ -275,25 +275,34 @@ namespace GTAVModdingLauncher
 		/// <returns>A JObject representing the latest update, or null if it's up to date</returns>
 		public JObject IsUpToDate()
 		{
-			HttpWebRequest request = WebRequest.CreateHttp("https://api.github.com/repos/fr-Pursuit/GTAVModdingLauncher/releases/latest");
-			request.UserAgent = "GTAVModdingLauncher-" + Version;
-
-			using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+			try
 			{
-				if(response.StatusCode == HttpStatusCode.OK)
+				HttpWebRequest request = WebRequest.CreateHttp("https://api.github.com/repos/fr-Pursuit/GTAVModdingLauncher/releases/latest");
+				request.UserAgent = "GTAVModdingLauncher-" + Version;
+
+				using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 				{
-					using(StreamReader streamReader = new StreamReader(response.GetResponseStream()))
-					using(JsonReader reader = new JsonTextReader(streamReader))
+					if(response.StatusCode == HttpStatusCode.OK)
 					{
-						JObject obj = JObject.Load(reader);
-						if(new Version(obj["tag_name"].ToString()) > Version)
+						using(StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+						using(JsonReader reader = new JsonTextReader(streamReader))
 						{
-							Log.Info("New update found ("+obj["name"]+')');
-							return obj;
+							JObject obj = JObject.Load(reader);
+							if(new Version(obj["tag_name"].ToString()) > Version)
+							{
+								Log.Info("New update found (" + obj["name"] + ')');
+								return obj;
+							}
 						}
 					}
+					else
+						Log.Warn("Unable to check for updates. Response code was " + response.StatusCode + " (" + response.StatusDescription + ')');
 				}
-				else Log.Warn("Unable to check for updates. Response code was " + response.StatusCode+" ("+response.StatusDescription+')');
+			}
+			catch(Exception e)
+			{
+				Log.Info("Unable to check for updates.");
+				Log.Info(e.ToString());
 			}
 
 			return null;

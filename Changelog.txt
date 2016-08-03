@@ -1,3 +1,6 @@
+__0.5.6__
+* Fixed a crash that happened when the update check failed
+
 __0.5.5__
 * Fixed bad handling of dlc mods
 
