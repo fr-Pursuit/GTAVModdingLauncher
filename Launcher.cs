@@ -298,8 +298,8 @@ namespace GTAVModdingLauncher
 			}
 			catch(Exception e)
 			{
-				Log.Info("Unable to check for updates.");
-				Log.Info(e.ToString());
+				Log.Warn("Unable to check for updates.");
+				Log.Warn(e.ToString());
 			}
 
 			return null;
