@@ -255,10 +255,7 @@ namespace GTAVModdingLauncher
 			}
 
 			if(this.Settings.CheckUpdates)
-			{
-				this.CurrentThread = new Thread(CheckUpdates);
-				this.CurrentThread.Start();
-			}
+				new Thread(CheckUpdates).Start();
 		}
 
 		private void CheckUpdates()

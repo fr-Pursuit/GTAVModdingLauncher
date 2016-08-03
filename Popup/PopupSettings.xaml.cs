@@ -21,6 +21,7 @@ namespace GTAVModdingLauncher.Popup
 		private delegate void Callback();
 		private string OldLanguage;
 		private string OldFolder;
+		private Thread verifyUpdatesThread;
 
 		public PopupSettings()
 		{
@@ -167,8 +168,11 @@ namespace GTAVModdingLauncher.Popup
 
 		private void CheckForUpdates(object sender, RoutedEventArgs e)
 		{
-			Launcher.Instance.CurrentThread = new Thread(VerifyUpdates);
-			Launcher.Instance.CurrentThread.Start();
+			if(this.verifyUpdatesThread == null || !this.verifyUpdatesThread.IsAlive)
+			{
+				this.verifyUpdatesThread = new Thread(VerifyUpdates);
+				this.verifyUpdatesThread.Start();
+			}
 		}
 
 		private void VerifyUpdates()
