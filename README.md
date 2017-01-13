@@ -3,7 +3,7 @@ This is a Grand Theft Auto V launcher that allows us to switch between several m
 
 MIT License
 
-Copyright © 2016 Pursuit
+Copyright © 2017 Pursuit
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
