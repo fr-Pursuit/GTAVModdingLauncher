@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Pursuit")]
 [assembly: AssemblyProduct("GTA V Modding Launcher")]
-[assembly: AssemblyCopyright("Copyright © 2016 Pursuit")]
+[assembly: AssemblyCopyright("Copyright © 2017 Pursuit")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

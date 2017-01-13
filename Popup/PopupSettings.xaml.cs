@@ -21,12 +21,16 @@ namespace GTAVModdingLauncher.Popup
 		private delegate void Callback();
 		private string OldLanguage;
 		private string OldFolder;
+        private string OldGtaPath;
+		private string OldCustomGtaFolder;
 		private Thread verifyUpdatesThread;
 
 		public PopupSettings()
 		{
 			this.OldLanguage = Launcher.Instance.Settings.Language;
 			this.OldFolder = Launcher.Instance.Settings.GetProfileFolder();
+            this.OldGtaPath = Launcher.Instance.GtaPath;
+			this.OldCustomGtaFolder = Launcher.Instance.Settings.CustomGTAFolder;
 			InitializeComponent();
 
 			for(int i = 0; i < I18n.SupportedLanguages.Count; i++)
@@ -59,6 +63,20 @@ namespace GTAVModdingLauncher.Popup
 			this.ProfileFolder.Text = Launcher.Instance.Settings.GetProfileFolder();
 			this.UseFolder.IsChecked = Launcher.Instance.Settings.CustomFolder != null;
 			this.UseFolderCheckedChange(null, null);
+
+			if(!Launcher.Instance.IsSteamVersion())
+			{
+				this.GtaFolder.Text = Launcher.Instance.GtaPath;
+				this.UseGtaFolder.IsChecked = Launcher.Instance.Settings.CustomGTAFolder != null;
+				this.UseGtaFolderCheckedChange(null, null);
+			}
+			else
+			{
+				this.GtaFolder.Text = Launcher.Instance.GtaPath;
+				this.UseGtaFolder.IsEnabled = false;
+				this.UseGtaFolder.IsChecked = false;
+				this.UseGtaFolderCheckedChange(null, null);
+			}
 		}
 
 		private Dictionary<string,string> GetSupportedGtaLanguages()
@@ -90,12 +108,26 @@ namespace GTAVModdingLauncher.Popup
 			this.Browse.IsEnabled = this.ProfileFolder.IsEnabled;
 		}
 
+		private void UseGtaFolderCheckedChange(object sender, EventArgs e)
+		{
+			this.GtaFolder.IsEnabled = (bool)this.UseGtaFolder.IsChecked;
+			this.BrowseGta.IsEnabled = this.GtaFolder.IsEnabled;
+		}
+
 		private void BrowseFolder(object sender, EventArgs e)
 		{
 			System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
 
 			if(dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				this.ProfileFolder.Text = dialog.SelectedPath;
+		}
+
+		private void BrowseGtaFolder(object sender, EventArgs e)
+		{
+			System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
+
+			if(dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+				this.GtaFolder.Text = dialog.SelectedPath;
 		}
 
 		private void Save(object sender, EventArgs e)
@@ -112,7 +144,8 @@ namespace GTAVModdingLauncher.Popup
 			Launcher.Instance.Settings.CheckUpdates = (bool)this.CheckUpdates.IsChecked;
 			Launcher.Instance.Settings.UseLogFile = (bool)this.UseLogFile.IsChecked;
 			Launcher.Instance.Settings.CustomFolder = (bool)this.UseFolder.IsChecked && this.ProfileFolder.Text != Launcher.Instance.UserDirPath ? this.ProfileFolder.Text : null;
-			Launcher.Instance.Settings.Language = I18n.SupportedLanguages[this.Languages.SelectedIndex];
+            Launcher.Instance.Settings.CustomGTAFolder = (bool)this.UseGtaFolder.IsChecked ? this.GtaFolder.Text : null;
+            Launcher.Instance.Settings.Language = I18n.SupportedLanguages[this.Languages.SelectedIndex];
 			Launcher.Instance.Settings.GtaLanguage = this.GetSupportedGtaLanguages()[(string)this.GtaLanguages.SelectedItem];
 
 			Launcher.Instance.SaveSettings();
@@ -142,7 +175,18 @@ namespace GTAVModdingLauncher.Popup
 				popup.ShowDialog();
 			}
 
-			if(Launcher.Instance.Settings.Language != this.OldLanguage)
+            if(Launcher.Instance.Settings.CustomGTAFolder != this.OldCustomGtaFolder)
+            {
+                if(Launcher.Instance.Settings.CustomGTAFolder == null)
+                    Launcher.Instance.ReadGamePath();
+                else
+                    Launcher.Instance.GtaPath = Launcher.Instance.Settings.CustomGTAFolder;
+
+                Launcher.Instance.UpdateVersionType();
+                Log.Info("Changed GTA folder from '" + this.OldGtaPath+ "' to '" + Launcher.Instance.GtaPath + "'");
+            }
+
+            if(Launcher.Instance.Settings.Language != this.OldLanguage)
 				I18n.LoadLanguage(Launcher.Instance.Settings.Language);
 
 			this.Close();

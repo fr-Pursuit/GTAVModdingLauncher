@@ -47,7 +47,7 @@
       <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PursuitLib, Version=0.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="PursuitLib, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\PursuitLib\bin\Release\PursuitLib.dll</HintPath>
     </Reference>

@@ -1,5 +1,7 @@
 __0.5.6__
 * Fixed a crash that happened when the update check failed
+* The launcher is now using a custom theme and should look more like a native program
++ You can now use the launcher on a custom GTA V directory (but you still have to have the registry key stating where your game is installed, to prevent piracy)
 
 __0.5.5__
 * Fixed bad handling of dlc mods

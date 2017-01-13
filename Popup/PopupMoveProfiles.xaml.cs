@@ -93,11 +93,11 @@ namespace GTAVModdingLauncher.Popup
 						foreach(string dir in dirs[index])
 						{
 							if(Directory.Exists(dir))
-								IOUtils.DeleteDirectory(dir);
+								IOUtils.Delete(dir);
 						}
 					}
 
-					IOUtils.DeleteDirectory(sourceDir);
+					IOUtils.Delete(sourceDir);
 
 					index++;
 				}

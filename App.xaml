@@ -3,17 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
 
-    <Application.Resources>
-        <Style TargetType="Button">
-            <Style.Resources>
-                <Style TargetType="Image">
-                    <Style.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.5" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Style.Resources>
-        </Style>
-    </Application.Resources>
+	<Application.Resources>
+		<ResourceDictionary Source="/PursuitLib;component/themes/Win10.xaml" />
+	</Application.Resources>
 </Application>

@@ -59,7 +59,7 @@ namespace GTAVModdingLauncher.Popup
 				foreach(string dir in dirs)
 				{
 					if(Directory.Exists(dir))
-						IOUtils.DeleteDirectory(dir);
+						IOUtils.Delete(dir);
 				}
 
 				this.ClosePopup();

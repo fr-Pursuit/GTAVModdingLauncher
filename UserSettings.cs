@@ -17,6 +17,7 @@ namespace GTAVModdingLauncher
 		public bool UseLogFile { get; set; }
 		public bool IntegrityVerified { get; set; }
 		public string CustomFolder { get; set; }
+		public string CustomGTAFolder { get; set; }
 		public string Language { get; set; }
 		public string GtaLanguage { get; set; }
 
@@ -29,6 +30,7 @@ namespace GTAVModdingLauncher
 			this.UseLogFile = true;
 			this.IntegrityVerified = false;
 			this.CustomFolder = null;
+			this.CustomGTAFolder = null;
 
 			this.Language = CultureInfo.CurrentCulture.ToString();
 			if(!I18n.SupportedLanguages.Contains(this.Language))

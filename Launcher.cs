@@ -90,55 +90,21 @@ namespace GTAVModdingLauncher
 		{
 			Log.Info("Initializing launcher...");
 
-			RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Rockstar Games\\Grand Theft Auto V", false);
+            if(this.Settings.CustomGTAFolder != null)
+            {
+                this.GtaPath = this.Settings.CustomGTAFolder;
+            }
+            else
+                this.ReadGamePath();
 
-			if(regKey != null)
+			if(this.GtaPath != null)
 			{
-				Instance.GtaPath = (string)regKey.GetValue("InstallFolder");
-				regKey.Close();
-			}
+				if(this.GtaPath.EndsWith("\\"))
+					this.GtaPath = this.GtaPath.Substring(0, this.GtaPath.Length - 1);
 
-			if(Instance.GtaPath == null)
-			{
-				regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Valve\\Steam", false);
+				Log.Info("Found GTA V installation at " + this.GtaPath + ' ' + (this.IsSteamVersion() ? "(Steam version)" : this.IsCustomVersion() ? "(Custom retail version)" : "(Retail version)"));
 
-				if(regKey != null)
-				{
-					Instance.SteamPath = (string)regKey.GetValue("InstallPath");
-					regKey.Close();
-
-					regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Rockstar Games\\GTAV", false);
-
-					if(regKey != null)
-					{
-						Instance.GtaPath = (string)regKey.GetValue("InstallFolderSteam");
-						regKey.Close();
-
-						if(Instance.GtaPath != null)
-							Instance.GtaPath = Instance.GtaPath.Substring(0, Instance.GtaPath.Length - 4);
-					}
-
-					if(Instance.GtaPath == null)
-					{
-						string path = Path.Combine(Instance.SteamPath, "steamapps\\common\\Grand Theft Auto V");
-
-						if(File.Exists(Path.Combine(path, "gta5.exe")))
-							Instance.GtaPath = path;
-					}
-				}
-			}
-
-			if(Instance.SteamPath != null && Instance.SteamPath.EndsWith("\\"))
-				Instance.SteamPath = Instance.SteamPath.Substring(0, Instance.SteamPath.Length - 1);
-
-			if(Instance.GtaPath != null)
-			{
-				if(Instance.GtaPath.EndsWith("\\"))
-					Instance.GtaPath = Instance.GtaPath.Substring(0, Instance.GtaPath.Length - 1);
-
-				Log.Info("Found GTA V installation at " + Instance.GtaPath + ' ' + (Instance.IsSteamVersion() ? "(Steam version)" : "(Retail version)"));
-
-				if(Directory.Exists(Instance.GtaPath))
+				if(Directory.Exists(this.GtaPath))
 				{
 					GameScanner.Init();
 
@@ -148,7 +114,7 @@ namespace GTAVModdingLauncher
 						{
 							using(Stream stream = File.Open(Path.Combine(UserDirPath, "profiles.dat"), FileMode.Open))
 							{
-								Instance.Profiles = (ProfileList)formatter.Deserialize(stream);
+								this.Profiles = (ProfileList)formatter.Deserialize(stream);
 							}
 						}
 						catch(Exception ex)
@@ -156,13 +122,13 @@ namespace GTAVModdingLauncher
 							Log.Error("Unable to read saved profiles.");
 							Log.Error(ex.ToString());
 							Messages.UnableToReadProfiles();
-							Instance.createDefaultProfiles();
+							this.createDefaultProfiles();
 						}
 					}
 					else
 					{
 						Log.Info("No profiles.dat file found.");
-						Instance.createDefaultProfiles();
+						this.createDefaultProfiles();
 					}
 
 					this.Window.Dispatcher.Invoke(new Callback(UpdateUI));
@@ -374,9 +340,58 @@ namespace GTAVModdingLauncher
 			}
 		}
 
+        public void ReadGamePath()
+        {
+            RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Rockstar Games\\Grand Theft Auto V", false);
+
+            if(regKey != null)
+            {
+                this.GtaPath = (string)regKey.GetValue("InstallFolder");
+                regKey.Close();
+            }
+
+            if(this.GtaPath == null)
+            {
+                regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Valve\\Steam", false);
+
+                if(regKey != null)
+                {
+                    this.SteamPath = (string)regKey.GetValue("InstallPath");
+                    regKey.Close();
+
+                    regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Rockstar Games\\GTAV", false);
+
+                    if(regKey != null)
+                    {
+                        this.GtaPath = (string)regKey.GetValue("InstallFolderSteam");
+                        regKey.Close();
+
+                        if(this.GtaPath != null)
+                            this.GtaPath = Instance.GtaPath.Substring(0, this.GtaPath.Length - 4);
+                    }
+
+                    if(this.GtaPath == null)
+                    {
+                        string path = Path.Combine(this.SteamPath, "steamapps\\common\\Grand Theft Auto V");
+
+                        if(File.Exists(Path.Combine(path, "gta5.exe")))
+                            this.GtaPath = path;
+                    }
+                }
+            }
+
+            if(this.SteamPath != null && Instance.SteamPath.EndsWith("\\"))
+                this.SteamPath = this.SteamPath.Substring(0, this.SteamPath.Length - 1);
+        }
+
 		public bool IsSteamVersion()
 		{
 			return this.SteamPath != null;
+		}
+
+		public bool IsCustomVersion()
+		{
+			return this.Settings != null && this.Settings.CustomGTAFolder != null;
 		}
 
 		/// <summary>
@@ -489,13 +504,18 @@ namespace GTAVModdingLauncher
 				Log.Error(ex.ToString());
 			}
 		}
-		
-		/// <summary>
-		/// Gets called when the user press the "Play" or "Play online" button
-		/// </summary>
-		/// <param name="online">Did the user chose to play online</param>
-		/// <param name="selected">the selected profile ID</param>
-		private void SwitchProfileAndPlay(bool online, int selected)
+
+        public void UpdateVersionType()
+        {
+            this.UiManager.GtaType = this.IsSteamVersion() ? I18n.Localize("Label", "SteamVersion") : (this.IsCustomVersion() ? I18n.Localize("Label", "CustomVersion") : I18n.Localize("Label", "RetailVersion"));
+        }
+
+        /// <summary>
+        /// Gets called when the user press the "Play" or "Play online" button
+        /// </summary>
+        /// <param name="online">Did the user chose to play online</param>
+        /// <param name="selected">the selected profile ID</param>
+        private void SwitchProfileAndPlay(bool online, int selected)
 		{
 			if(this.Profiles.CurrentProfile != selected)
 			{
@@ -559,7 +579,7 @@ namespace GTAVModdingLauncher
 						foreach(string dir in modDirs)
 						{
 							if(Directory.Exists(dir))
-								IOUtils.DeleteDirectory(dir);
+								IOUtils.Delete(dir);
 						}
 
 						foreach(string mod in dlcMods)
@@ -596,7 +616,7 @@ namespace GTAVModdingLauncher
 						foreach(string dir in profileDirs)
 						{
 							if(Directory.Exists(dir))
-								IOUtils.DeleteDirectory(dir);
+								IOUtils.Delete(dir);
 						}
 					}
 
@@ -770,7 +790,7 @@ namespace GTAVModdingLauncher
 					string selected = this.UiManager.Profiles[this.UiManager.SelectedProfile];
 					int index = this.UiManager.SelectedProfile;
 					if(Directory.Exists(Path.Combine(this.Settings.GetProfileFolder(),  selected)))
-						IOUtils.DeleteDirectory(Path.Combine(this.Settings.GetProfileFolder(), selected));
+						IOUtils.Delete(Path.Combine(this.Settings.GetProfileFolder(), selected));
 					this.Profiles.Remove(selected);
 					this.UiManager.Profiles.Remove(selected);
 
@@ -810,7 +830,7 @@ namespace GTAVModdingLauncher
 
 		private void OnI18nReload(object sender, EventArgs e)
 		{
-			this.UiManager.GtaType = this.IsSteamVersion() ? I18n.Localize("Label", "SteamVersion") : I18n.Localize("Label", "RetailVersion");
+            this.UpdateVersionType();
 		}
 		
 		private void OnWindowClosing(object sender, CancelEventArgs e)
