@@ -155,15 +155,15 @@ namespace GTAVModdingLauncher
 			set { this.window.Progress.IsIndeterminate = value; }
 		}
 
-		private void NotifyPropertyChanged(string propertyName)
-		{
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
 		public UIManager(MainWindow window)
 		{
 			this.window = window;
 			this.Profiles.Add(I18n.Localize("Random", "Loading"));
+		}
+
+		private void NotifyPropertyChanged(string propertyName)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

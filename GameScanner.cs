@@ -79,6 +79,7 @@ namespace GTAVModdingLauncher
 				vanillaEntries.Add("installers");
 				vanillaEntries.Add("installscript.vdf");
 				vanillaEntries.Add("steam_api64.dll");
+				vanillaEntries.Add("steam_appid.txt");
 			}
 
 			Process process = Process.GetCurrentProcess();

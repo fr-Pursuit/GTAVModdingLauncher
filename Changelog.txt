@@ -1,3 +1,6 @@
+__0.5.7__
+* Fixed a bug where the game was always detected as modded on some Steam versions
+
 __0.5.6__
 * Fixed a crash that happened when the update check failed
 * The launcher is now using a custom theme and should look more like a native program
