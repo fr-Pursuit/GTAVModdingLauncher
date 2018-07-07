@@ -80,6 +80,7 @@ namespace GTAVModdingLauncher
 				vanillaEntries.Add("installscript.vdf");
 				vanillaEntries.Add("steam_api64.dll");
 				vanillaEntries.Add("steam_appid.txt");
+				vanillaEntries.Add("GTAVLanguageSelect.exe");
 			}
 
 			Process process = Process.GetCurrentProcess();
