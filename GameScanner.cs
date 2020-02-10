@@ -94,7 +94,7 @@ namespace GTAVModdingLauncher
 				vanillaEntries.Add(Path.GetFileName(process.MainModule.FileName.ToLower()));
 			}
 
-			fileHashes.Add("x64a.rpf", "683610e269ba60c5fcc7a9f6d1a8bfd5");
+			fileHashes.Add("x64a.rpf", "edfbe6855ec32a21a698abc27a899341");
 			fileHashes.Add("x64b.rpf", "70af24cd4fe2c8ee58edb902f018a558");
 			fileHashes.Add("x64c.rpf", "2a0f6f1c35ad567fe8e56b9c9cc4e4c6");
 			fileHashes.Add("x64d.rpf", "c8757b052ab5079c7749bcce02538b2e");
