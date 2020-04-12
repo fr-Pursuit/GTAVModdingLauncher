@@ -1,4 +1,5 @@
-﻿using PursuitLib.Wpf;
+﻿using PursuitLib;
+using PursuitLib.Windows.WPF;
 using System;
 using System.Globalization;
 
@@ -41,12 +42,12 @@ namespace GTAVModdingLauncher
 
 		public string GetProfileFolder()
 		{
-			return this.CustomFolder != null ? this.CustomFolder : Launcher.Instance.UserDirPath;
+			return this.CustomFolder ?? Launcher.Instance.UserDirectory;
 		}
 
 		public string GetGtaLanguage()
 		{
-			return this.GtaLanguage != null ? this.GtaLanguage : this.GetDefaultGtaLanguage();
+			return this.GtaLanguage ?? this.GetDefaultGtaLanguage();
 		}
 
 		private string GetDefaultGtaLanguage()
