@@ -2,6 +2,9 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using PursuitLib.Windows.WPF;
+using PursuitLib.Windows.WPF.Dialogs;
 
 namespace GTAVModdingLauncher.Popup
 {
@@ -13,13 +16,15 @@ namespace GTAVModdingLauncher.Popup
 		private int profileIndex;
 		private string oldName;
 
-		public PopupEdit(int index, string oldName)
+		public PopupEdit(Window parent, int index, string oldName)
 		{
 			this.profileIndex = index;
 			this.oldName = oldName;
 
 			InitializeComponent();
 			this.ProfileName.Text = oldName;
+
+			this.SetParent(parent);
 		}
 
 		private void Save(object sender, EventArgs e)
@@ -45,11 +50,11 @@ namespace GTAVModdingLauncher.Popup
 					launcher.SaveProfiles();
 					this.Close();
 				}
-				else Messages.Show(this, "ProfileSameName", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				else LocalizedMessage.Show(this, "ProfileSameName", "Error", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
 			}
 			catch(Exception)
 			{
-				Messages.Show(this, "InvalidName", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				LocalizedMessage.Show(this, "InvalidName", "Error", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
 			}
 		}
 

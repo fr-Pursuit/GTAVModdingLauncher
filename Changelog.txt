@@ -1,3 +1,9 @@
+__0.6.0__
+* The launcher's code has been cleaned
+* The launcher is now using PursuitLib's new Win10 theme (the UI now looks more native)
+* Popups are now handled in a better way
++ Custom installations can now be easily specified in no installation is found
+
 __0.5.7__
 * Fixed a bug where the game was always detected as modded on some Steam versions
 

@@ -1,78 +1,75 @@
-﻿<Window x:Class="GTAVModdingLauncher.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:p="clr-namespace:PursuitLib.Wpf;assembly=PursuitLib"
-        mc:Ignorable="d"
-        ResizeMode="CanMinimize"
-        WindowStartupLocation="CenterScreen"
-        Icon="/GTAVModdingLauncher;component/icon.ico"
-        Title="{Binding WindowTitle, FallbackValue='GTA V Modding Launcher'}" Width="800" Height="500">
+﻿<pm:ModernWindow x:Class="GTAVModdingLauncher.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:p="clr-namespace:PursuitLib.Windows.WPF;assembly=PursuitLib.Windows.WPF"
+		xmlns:pm="clr-namespace:PursuitLib.Windows.WPF.Modern;assembly=PursuitLib.Windows.WPF.Modern"
+		mc:Ignorable="d"
+		WindowStartupLocation="CenterScreen"
+		Icon="/GTAVModdingLauncher;component/icon.ico"
+		Title="{Binding WindowTitle, FallbackValue='GTA V Modding Launcher'}" Width="800" Height="500">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
 
-    <Window.Background>
-        <ImageBrush ImageSource="{Binding WindowBackground}"/>
-    </Window.Background>
+		<Image Grid.Row="0" Name="ImgBg" Stretch="UniformToFill" />
 
-    <StackPanel VerticalAlignment="Bottom" Background="#0FFF">
-        <ProgressBar Name="Progress" Height="8" Visibility="Hidden" />
-        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="#C8FFFFFF">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="440"/>
-                <ColumnDefinition Width="170"/>
-            </Grid.ColumnDefinitions>
+		<StackPanel Grid.Row="1" VerticalAlignment="Bottom" IsEnabled="{Binding ButtonsEnabled}">
+			<ProgressBar Name="Progress" Height="8" Visibility="{Binding ProgressBarVisibility, FallbackValue='Hidden'}" />
+			<Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="{DynamicResource GrayBrush9}">
+				<Grid HorizontalAlignment="Left">
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition />
+					</Grid.RowDefinitions>
 
-            <Grid Margin="3" Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition />
+						<ColumnDefinition />
+					</Grid.ColumnDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+					<Label Grid.Row="0" Grid.Column="0" Content="{p:I18n Profile}" Width="45"/>
+					<ComboBox Grid.Row="0" Grid.Column="1" Name="ProfileList" ItemsSource="{Binding Profiles, Mode=OneWay}" SelectedIndex="{Binding SelectedProfile}" FontSize="11" Width="120" Height="20"/>
 
-                <Label Grid.Row="0" Grid.Column="0" Content="{p:I18n Profile}" Width="45"/>
-                <ComboBox Grid.Row="0" Grid.Column="1" Name="ProfileList" IsEnabled="{Binding ButtonsEnabled}" ItemsSource="{Binding Profiles, Mode=OneWay}" SelectedIndex="{Binding SelectedProfile}" FontSize="11" Width="120" Height="20"/>
+					<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+						<Button Name="AboutButton" ToolTip="{p:I18n About}" Width="17" Height="17" Margin="1">
+							<Image Source="/GTAVModdingLauncher;component/resources/about.png" Margin="1,0,0,0" />
+						</Button>
+						<Button Name="SettingsButton" ToolTip="{p:I18n Settings}" Width="17" Height="17" Margin="1">
+							<Image Source="/GTAVModdingLauncher;component/resources/settings.png"/>
+						</Button>
+					</StackPanel>
 
-                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Name="AboutButton" ToolTip="{p:I18n About}" IsEnabled="{Binding ButtonsEnabled}" Width="17" Height="17" Margin="1">
-                        <Image Source="/GTAVModdingLauncher;component/resources/about.png" />
-                    </Button>
-                    <Button Name="SettingsButton" ToolTip="{p:I18n Settings}" IsEnabled="{Binding ButtonsEnabled}" Width="17" Height="17" Margin="1">
-                        <Image Source="/GTAVModdingLauncher;component/resources/settings.png"/>
-                    </Button>
-                </StackPanel>
+					<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+						<Button Name="CreateButton" ToolTip="{p:I18n CreateProfile}" Width="28" Height="22" Margin="1">
+							<Image Source="/GTAVModdingLauncher;component/resources/createProfile.png"/>
+						</Button>
+						<Button Name="EditButton" ToolTip="{p:I18n EditProfile}" Width="28" Height="22" Margin="1">
+							<Image Source="/GTAVModdingLauncher;component/resources/editProfile.png"/>
+						</Button>
+						<Button Name="ApplyButton" ToolTip="{p:I18n ProfileFolder}" IsEnabled="{Binding CanApplyChanges}" Width="28" Height="22" Margin="1">
+							<Image Source="/GTAVModdingLauncher;component/resources/apply.png"/>
+						</Button>
+						<Button Name="DeleteButton" ToolTip="{p:I18n DeleteProfile}" Width="28" Height="22" Margin="1">
+							<Image Source="/GTAVModdingLauncher;component/resources/deleteProfile.png"/>
+						</Button>
+					</StackPanel>
+				</Grid>
 
-                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Name="CreateButton" ToolTip="{p:I18n CreateProfile}" IsEnabled="{Binding ButtonsEnabled}" Width="28" Height="22" Margin="1">
-                        <Image Source="/GTAVModdingLauncher;component/resources/createProfile.png"/>
-                    </Button>
-                    <Button Name="EditButton" ToolTip="{p:I18n EditProfile}" IsEnabled="{Binding ButtonsEnabled}" Width="28" Height="22" Margin="1">
-                        <Image Source="/GTAVModdingLauncher;component/resources/editProfile.png"/>
-                    </Button>
-                    <Button Name="FolderButton" ToolTip="{p:I18n ProfileFolder}" IsEnabled="{Binding ButtonsEnabled}" Width="28" Height="22" Margin="1">
-                        <Image Source="/GTAVModdingLauncher;component/resources/folder.png"/>
-                    </Button>
-                    <Button Name="DeleteButton" ToolTip="{p:I18n DeleteProfile}" IsEnabled="{Binding ButtonsEnabled}" Width="28" Height="22" Margin="1">
-                        <Image Source="/GTAVModdingLauncher;component/resources/deleteProfile.png"/>
-                    </Button>
-                </StackPanel>
-            </Grid>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+					<Button Name="PlayButton" Margin="3" Width="170" Height="45" FontWeight="Bold" FontSize="14" Content="{p:I18n Play}" />
+					<Button Name="PlayOnlineButton" IsEnabled="{Binding CanPlayOnline}" Margin="3" Width="170" Height="45" FontWeight="Bold" FontSize="14" Content="{p:I18n PlayOnline}" />
+				</StackPanel>
 
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Name="PlayButton" IsEnabled="{Binding ButtonsEnabled}" Margin="3" Width="170" Height="45" FontWeight="Bold" FontSize="14" Content="{p:I18n Play}" />
-                <Button Name="PlayOnlineButton" IsEnabled="{Binding CanPlayOnline}" Margin="3" Width="170" Height="45" FontWeight="Bold" FontSize="14" Content="{p:I18n PlayOnline}" />
-            </StackPanel>
-
-            <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="3">
-                <Label Foreground="#808080" Padding="0" Content="{Binding LauncherVersion}" HorizontalAlignment="Right" />
-                <Label Foreground="#808080" Padding="0" Content="{Binding GtaVersion}" HorizontalAlignment="Right" />
-                <Label Foreground="#808080" Padding="0" Content="{Binding GtaType}" HorizontalAlignment="Right" />
-            </StackPanel>
-        </Grid>
-    </StackPanel>
-
-</Window>
+				<StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="3">
+					<Label Foreground="#808080" Padding="0" Content="{Binding LauncherVersion}" HorizontalAlignment="Right" />
+					<Label Foreground="#808080" Padding="0" Content="{Binding GtaVersion}" HorizontalAlignment="Right" />
+					<Label Foreground="#808080" Padding="0" Content="{Binding GtaType}" HorizontalAlignment="Right" />
+				</StackPanel>
+			</Grid>
+		</StackPanel>
+	</Grid>
+</pm:ModernWindow>

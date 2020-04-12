@@ -3,19 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:p="clr-namespace:PursuitLib.Wpf;assembly=PursuitLib"
+        xmlns:p="clr-namespace:PursuitLib.Windows.WPF;assembly=PursuitLib.Windows.WPF"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         KeyDown="OnKeyDown"
         Icon="/GTAVModdingLauncher;component/icon.ico"
-        Title="{p:I18n}" Width="350" Height="360">
-    <Grid Margin="3">
+        Title="{p:I18n}" Width="360" Height="350">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6">
             <StackPanel Orientation="Horizontal">
                 <Label Content="{p:I18n Language}" Width="150" />
                 <ComboBox Name="Languages" FontSize="11" Width="175" Height="20"/>
@@ -29,26 +29,19 @@
             <CheckBox Name="Offline" Content="{p:I18n OfflineMode}" Margin="3,5,0,5"/>
             <CheckBox Name="CheckUpdates" Content="{p:I18n CheckUpdates}" Margin="3,5,0,5"/>
             <CheckBox Name="UseLogFile" Content="{p:I18n UseLogFile}" Margin="3,5,0,5"/>
-            <StackPanel Orientation="Horizontal">
-                <CheckBox Name="UseFolder" Content="{p:I18n CustomFolder}" Checked="UseFolderCheckedChange" Unchecked="UseFolderCheckedChange" Width="150" Margin="3,5,3,5" />
-                <TextBox Name="ProfileFolder" Width="150" Height="20" />
-                <Button Name="Browse" ToolTip="{p:I18n Browse}" Click="BrowseFolder" Margin="3" Width="20" Height="20">
-                    <Image Source="/GTAVModdingLauncher;component/resources/browse.png"/>
-                </Button>
-            </StackPanel>
+
 			<StackPanel Orientation="Horizontal">
-				<CheckBox Name="UseGtaFolder" Content="{p:I18n CustomGtaFolder}" Checked="UseGtaFolderCheckedChange" Unchecked="UseGtaFolderCheckedChange" Width="150" Margin="3,5,3,5" />
-				<TextBox Name="GtaFolder" Width="150" Height="20" />
-				<Button Name="BrowseGta" ToolTip="{p:I18n Browse}" Click="BrowseGtaFolder" Margin="3" Width="20" Height="20">
-					<Image Source="/GTAVModdingLauncher;component/resources/browse.png"/>
-				</Button>
+				<Button Content="{p:I18n ManageInstalls}" HorizontalAlignment="Left" Margin="3" Width="150" Click="ManageInstalls"/>
+				<TextBox Name="SelectedVersion" Width="150" Height="20" Margin="20 0 0 0" IsReadOnly="True" IsReadOnlyCaretVisible="True" />
 			</StackPanel>
-			<Button Content="{p:I18n Verify}" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="3" Width="150" Click="Verify"/>
-            <Button Content="{p:I18n CheckUpdates}" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="3" Width="150" Click="CheckForUpdates"/>
+
+            <Button Content="{p:I18n CheckUpdates}" HorizontalAlignment="Left" Margin="3" Width="150" Click="CheckForUpdates"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Content="{p:I18n Save}" Margin="3" Width="70" Click="Save"/>
-            <Button Content="{p:I18n Cancel}" Margin="3" Width="70" Click="Cancel"/>
+
+	    <Border Grid.Row="1" Background="#EEE" BorderBrush="#DFDFDF" BorderThickness="0 1 0 0"/>
+	    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Button Content="{p:I18n Save}" Margin="4" Width="80" Click="Save"/>
+            <Button Content="{p:I18n Cancel}" Margin="4" Width="80" Click="Cancel"/>
         </StackPanel>
     </Grid>
 </Window>

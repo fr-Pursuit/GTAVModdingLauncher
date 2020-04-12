@@ -1,15 +1,14 @@
-﻿using System.Windows;
+﻿using PursuitLib.Windows.WPF.Modern;
 
 namespace GTAVModdingLauncher
 {
-	public partial class MainWindow : Window
+	public partial class MainWindow : ModernWindow
 	{
 		public MainWindow()
 		{
-			Launcher launcher = new Launcher(this);
 			this.InitializeComponent();
-			launcher.InitUI();
-			this.DataContext = launcher.UiManager;
+			Launcher.Instance.InitUI(this);
+			this.DataContext = Launcher.Instance.UiManager;
 		}
 	}
 }

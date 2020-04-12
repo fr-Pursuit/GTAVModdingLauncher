@@ -3,11 +3,14 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using PursuitLib;
-using PursuitLib.Wpf;
+using PursuitLib.Windows.WPF;
+using PursuitLib.Extensions;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Threading;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json.Linq;
+using PursuitLib.Windows.WPF.Dialogs;
 
 namespace GTAVModdingLauncher.Popup
 {
@@ -20,18 +23,13 @@ namespace GTAVModdingLauncher.Popup
 
 		private delegate void Callback();
 		private string OldLanguage;
-		private string OldFolder;
-        private string OldGtaPath;
-		private string OldCustomGtaFolder;
 		private Thread verifyUpdatesThread;
 
-		public PopupSettings()
+		public PopupSettings(Window parent)
 		{
 			this.OldLanguage = Launcher.Instance.Settings.Language;
-			this.OldFolder = Launcher.Instance.Settings.GetProfileFolder();
-            this.OldGtaPath = Launcher.Instance.GtaPath;
-			this.OldCustomGtaFolder = Launcher.Instance.Settings.CustomGTAFolder;
 			InitializeComponent();
+			this.SetParent(parent);
 
 			for(int i = 0; i < I18n.SupportedLanguages.Count; i++)
 			{
@@ -60,23 +58,7 @@ namespace GTAVModdingLauncher.Popup
 			this.Offline.IsChecked = Launcher.Instance.Settings.OfflineMode;
 			this.CheckUpdates.IsChecked = Launcher.Instance.Settings.CheckUpdates;
 			this.UseLogFile.IsChecked = Launcher.Instance.Settings.UseLogFile;
-			this.ProfileFolder.Text = Launcher.Instance.Settings.GetProfileFolder();
-			this.UseFolder.IsChecked = Launcher.Instance.Settings.CustomFolder != null;
-			this.UseFolderCheckedChange(null, null);
-
-			if(!Launcher.Instance.IsSteamVersion())
-			{
-				this.GtaFolder.Text = Launcher.Instance.GtaPath;
-				this.UseGtaFolder.IsChecked = Launcher.Instance.Settings.CustomGTAFolder != null;
-				this.UseGtaFolderCheckedChange(null, null);
-			}
-			else
-			{
-				this.GtaFolder.Text = Launcher.Instance.GtaPath;
-				this.UseGtaFolder.IsEnabled = false;
-				this.UseGtaFolder.IsChecked = false;
-				this.UseGtaFolderCheckedChange(null, null);
-			}
+			this.SelectedVersion.Text = Launcher.Instance.Installs.Selected?.Path;
 		}
 
 		private Dictionary<string,string> GetSupportedGtaLanguages()
@@ -102,91 +84,32 @@ namespace GTAVModdingLauncher.Popup
 			}
 		}
 
-		private void UseFolderCheckedChange(object sender, EventArgs e)
-		{
-			this.ProfileFolder.IsEnabled = (bool)this.UseFolder.IsChecked;
-			this.Browse.IsEnabled = this.ProfileFolder.IsEnabled;
-		}
-
-		private void UseGtaFolderCheckedChange(object sender, EventArgs e)
-		{
-			this.GtaFolder.IsEnabled = (bool)this.UseGtaFolder.IsChecked;
-			this.BrowseGta.IsEnabled = this.GtaFolder.IsEnabled;
-		}
-
-		private void BrowseFolder(object sender, EventArgs e)
-		{
-			System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
-
-			if(dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-				this.ProfileFolder.Text = dialog.SelectedPath;
-		}
-
-		private void BrowseGtaFolder(object sender, EventArgs e)
-		{
-			System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
-
-			if(dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-				this.GtaFolder.Text = dialog.SelectedPath;
-		}
-
 		private void Save(object sender, EventArgs e)
 		{
-			if(this.ProfileFolder.Text.Contains(Launcher.Instance.GtaPath))
-			{
-				Messages.Show(Launcher.Instance.Window, "CantMoveProfiles", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
-			}
-
 			Launcher.Instance.Settings.UseRph = (bool)this.UseRph.IsChecked;
 			Launcher.Instance.Settings.DeleteLogs = (bool)this.Delete.IsChecked;
 			Launcher.Instance.Settings.OfflineMode = (bool)this.Offline.IsChecked;
 			Launcher.Instance.Settings.CheckUpdates = (bool)this.CheckUpdates.IsChecked;
 			Launcher.Instance.Settings.UseLogFile = (bool)this.UseLogFile.IsChecked;
-			Launcher.Instance.Settings.CustomFolder = (bool)this.UseFolder.IsChecked && this.ProfileFolder.Text != Launcher.Instance.UserDirPath ? this.ProfileFolder.Text : null;
-            Launcher.Instance.Settings.CustomGTAFolder = (bool)this.UseGtaFolder.IsChecked ? this.GtaFolder.Text : null;
             Launcher.Instance.Settings.Language = I18n.SupportedLanguages[this.Languages.SelectedIndex];
 			Launcher.Instance.Settings.GtaLanguage = this.GetSupportedGtaLanguages()[(string)this.GtaLanguages.SelectedItem];
 
 			Launcher.Instance.SaveSettings();
 
-			if(Log.HasLogFile() && !Launcher.Instance.Settings.UseLogFile)
+			if(Log.HasLogFile && !Launcher.Instance.Settings.UseLogFile)
 			{
 				Log.Info("The user chose to disable logging.");
-				Log.RemoveLogFile();
+				Log.LogFile = null;
 			}
-			else if(!Log.HasLogFile() && Launcher.Instance.Settings.UseLogFile)
+			else if(!Log.HasLogFile && Launcher.Instance.Settings.UseLogFile)
 			{
-				Log.SetLogFile(Path.Combine(Launcher.Instance.UserDirPath, "latest.log"));
-				Log.Info("GTA V Modding Launcher " + Launcher.Version);
-				Log.Info("Using PursuitLib " + Versions.GetTypeVersion(typeof(Log)));
+				Log.LogFile = Path.Combine(Launcher.Instance.UserDirectory, "latest.log");
+				Log.Info("GTA V Modding Launcher " + Launcher.Instance.Version);
+				Log.Info("Using PursuitLib " + typeof(Log).GetVersion());
 				Log.Info("The user chose to enable logging.");
 			}
 
-			if(Launcher.Instance.Settings.GetProfileFolder() != this.OldFolder)
-			{
-				Log.Info("Moving profiles from '" + this.OldFolder + "' to '" + Launcher.Instance.Settings.GetProfileFolder() + "'");
-
-				if(!Directory.Exists(Launcher.Instance.Settings.GetProfileFolder()))
-					Directory.CreateDirectory(Launcher.Instance.Settings.GetProfileFolder());
-
-				PopupMoveProfiles popup = new PopupMoveProfiles(this.OldFolder);
-				Launcher.Instance.CurrentThread = popup.StartThread();
-				popup.ShowDialog();
-			}
-
-            if(Launcher.Instance.Settings.CustomGTAFolder != this.OldCustomGtaFolder)
-            {
-                if(Launcher.Instance.Settings.CustomGTAFolder == null)
-                    Launcher.Instance.ReadGamePath();
-                else
-                    Launcher.Instance.GtaPath = Launcher.Instance.Settings.CustomGTAFolder;
-
-                Launcher.Instance.UpdateVersionType();
-                Log.Info("Changed GTA folder from '" + this.OldGtaPath+ "' to '" + Launcher.Instance.GtaPath + "'");
-            }
-
-            if(Launcher.Instance.Settings.Language != this.OldLanguage)
+			if(Launcher.Instance.Settings.Language != this.OldLanguage)
 				I18n.LoadLanguage(Launcher.Instance.Settings.Language);
 
 			this.Close();
@@ -195,13 +118,6 @@ namespace GTAVModdingLauncher.Popup
 		private void Cancel(object sender, EventArgs e)
 		{
 			this.Close();
-		}
-
-		private void Verify(object sender, RoutedEventArgs e)
-		{
-			PopupVerifyIntegrity popup = new PopupVerifyIntegrity();
-			Launcher.Instance.CurrentThread = popup.StartThread();
-			popup.ShowDialog();
 		}
 
 		private void OnKeyDown(object sender, KeyEventArgs e)
@@ -230,7 +146,13 @@ namespace GTAVModdingLauncher.Popup
 
 		private void ShowUpToDatePopup()
 		{
-			Messages.Show(this, "UpToDate", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+			LocalizedMessage.Show(this, "UpToDate", "Info", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Ok);
+		}
+
+		private void ManageInstalls(object sender, RoutedEventArgs e)
+		{
+			new PopupChooseInstall(this).ShowDialog();
+			this.SelectedVersion.Text = Launcher.Instance.Installs.Selected?.Path;
 		}
 	}
 }

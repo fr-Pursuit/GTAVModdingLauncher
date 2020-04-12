@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GTAVModdingLauncher</RootNamespace>
     <AssemblyName>GTAVModdingLauncher</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -43,13 +43,33 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
-    <Reference Include="PursuitLib, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack">
+      <HintPath>..\..\..\Libraries\WindowsAPICodePack\Core\bin\Release\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\..\..\Libraries\WindowsAPICodePack\Shell\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PursuitLib, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\PursuitLib\bin\Release\PursuitLib.dll</HintPath>
+      <HintPath>..\..\..\Libraries\PursuitLib\PursuitLib\bin\Release\PursuitLib.dll</HintPath>
+    </Reference>
+    <Reference Include="PursuitLib.Windows">
+      <HintPath>..\..\..\Libraries\PursuitLib\PursuitLib.Windows\bin\Release\PursuitLib.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="PursuitLib.Windows.WPF">
+      <HintPath>..\..\..\Libraries\PursuitLib\PursuitLib.Windows.WPF\bin\Release\PursuitLib.Windows.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="PursuitLib.Windows.WPF.Modern">
+      <HintPath>..\..\..\Libraries\PursuitLib\PursuitLib.Windows.WPF.Modern\bin\Release\PursuitLib.Windows.WPF.Modern.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -57,6 +77,9 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -75,36 +98,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CrashReporter.xaml.cs">
-      <DependentUpon>CrashReporter.xaml</DependentUpon>
+    <Compile Include="GTAInstall.cs" />
+    <Compile Include="InstallList.cs" />
+    <Compile Include="InstallType.cs" />
+    <Compile Include="Legacy\LegacyBinder.cs" />
+    <Compile Include="Legacy\ProfileList.cs" />
+    <Compile Include="Legacy\UserSettings.cs" />
+    <Compile Include="Popup\InstallEntry.cs" />
+    <Compile Include="Popup\PopupChooseInstall.xaml.cs">
+      <DependentUpon>PopupChooseInstall.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popup\PopupVerifyIntegrity.xaml.cs">
-      <DependentUpon>PopupVerifyIntegrity.xaml</DependentUpon>
+    <Compile Include="Popup\PopupCustomInstall.xaml.cs">
+      <DependentUpon>PopupCustomInstall.xaml</DependentUpon>
     </Compile>
     <Compile Include="Popup\PopupCreate.xaml.cs">
       <DependentUpon>PopupCreate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popup\PopupDeletingMods.xaml.cs">
-      <DependentUpon>PopupDeletingMods.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Popup\PopupEdit.xaml.cs">
       <DependentUpon>PopupEdit.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Popup\PopupMoveMods.xaml.cs">
-      <DependentUpon>PopupMoveMods.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Popup\PopupMoveProfiles.xaml.cs">
-      <DependentUpon>PopupMoveProfiles.xaml</DependentUpon>
     </Compile>
     <Compile Include="Popup\PopupSettings.xaml.cs">
       <DependentUpon>PopupSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SteamHelper.cs" />
     <Compile Include="UIManager.cs" />
-    <Compile Include="UserSettings.cs" />
-    <Page Include="CrashReporter.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Compile Include="Work\DeleteMods.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -118,7 +136,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Popup\PopupVerifyIntegrity.xaml">
+    <Page Include="Popup\PopupChooseInstall.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Popup\PopupCustomInstall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -126,19 +148,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popup\PopupDeletingMods.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Popup\PopupEdit.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Popup\PopupMoveMods.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Popup\PopupMoveProfiles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -148,9 +158,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Messages.cs" />
     <Compile Include="GameScanner.cs" />
-    <Compile Include="ProfileList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -169,8 +177,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.manifest" />
-    <Resource Include="lang\en-US.lang" />
-    <Resource Include="lang\fr-FR.lang" />
+    <EmbeddedResource Include="lang\en-US.lang" />
+    <EmbeddedResource Include="lang\fr-FR.lang" />
+    <EmbeddedResource Include="app.meta" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -182,53 +191,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\about.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\browse.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\createProfile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\deleteProfile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\editProfile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\folder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\settings.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\bg0.png" />
-    <Resource Include="resources\bg1.png" />
-    <Resource Include="resources\bg10.png" />
-    <Resource Include="resources\bg11.png" />
-    <Resource Include="resources\bg12.png" />
-    <Resource Include="resources\bg13.png" />
-    <Resource Include="resources\bg14.png" />
-    <Resource Include="resources\bg15.png" />
-    <Resource Include="resources\bg16.png" />
-    <Resource Include="resources\bg2.png" />
-    <Resource Include="resources\bg3.png" />
-    <Resource Include="resources\bg4.png" />
-    <Resource Include="resources\bg5.png" />
-    <Resource Include="resources\bg6.png" />
-    <Resource Include="resources\bg7.png" />
-    <Resource Include="resources\bg8.png" />
-    <Resource Include="resources\bg9.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Changelog.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\crash.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="License.txt">
@@ -236,7 +202,29 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="libs\Newtonsoft.Json.dll" />
+    <EmbeddedResource Include="libraries\Newtonsoft.Json.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\about.png" />
+    <Resource Include="resources\createProfile.png" />
+    <Resource Include="resources\deleteProfile.png" />
+    <Resource Include="resources\editProfile.png" />
+    <Resource Include="resources\folder.png" />
+    <Resource Include="resources\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="libraries\Microsoft.WindowsAPICodePack.dll" />
+    <EmbeddedResource Include="libraries\Microsoft.WindowsAPICodePack.Shell.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\retail.png" />
+    <Resource Include="resources\steam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\apply.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

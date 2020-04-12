@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GTAVModdingLauncher
+namespace GTAVModdingLauncher.Legacy
 {
 	/// <summary>
 	/// The profile list, saved in profiles.dat

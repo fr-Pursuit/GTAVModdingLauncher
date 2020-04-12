@@ -1,8 +1,15 @@
-﻿using PursuitLib.Wpf;
+﻿using PursuitLib;
+using PursuitLib.Windows.WPF;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.Net.Mime;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using PursuitLib.IO;
 
 namespace GTAVModdingLauncher
 {
@@ -24,21 +31,7 @@ namespace GTAVModdingLauncher
 				if(this.windowTitle != value)
 				{
 					this.windowTitle = value;
-					this.NotifyPropertyChanged("WindowTitle");
-				}
-			}
-		}
-
-		private string windowBackground = "/GTAVModdingLauncher;component/resources/bg" + new Random().Next(16) + ".png";
-		public string WindowBackground
-		{
-			get { return this.windowBackground; }
-			set
-			{
-				if(this.windowBackground != value)
-				{
-					this.windowBackground = value;
-					this.NotifyPropertyChanged("WindowBackground");
+					this.NotifyPropertyChanged(nameof(WindowTitle));
 				}
 			}
 		}
@@ -52,7 +45,7 @@ namespace GTAVModdingLauncher
 				if(this.buttonsEnabled != value)
 				{
 					this.buttonsEnabled = value;
-					this.NotifyPropertyChanged("ButtonsEnabled");
+					this.NotifyPropertyChanged(nameof(ButtonsEnabled));
 				}
 			}
 		}
@@ -66,7 +59,21 @@ namespace GTAVModdingLauncher
 				if(this.canPlayOnline != value)
 				{
 					this.canPlayOnline = value;
-					this.NotifyPropertyChanged("CanPlayOnline");
+					this.NotifyPropertyChanged(nameof(CanPlayOnline));
+				}
+			}
+		}
+
+		private bool canApplyChanges = false;
+		public bool CanApplyChanges
+		{
+			get { return this.canApplyChanges; }
+			set
+			{
+				if(this.canApplyChanges != value)
+				{
+					this.canApplyChanges = value;
+					this.NotifyPropertyChanged(nameof(CanApplyChanges));
 				}
 			}
 		}
@@ -82,7 +89,7 @@ namespace GTAVModdingLauncher
 				if(this.selectedProfile != value)
 				{
 					this.selectedProfile = value;
-					this.NotifyPropertyChanged("SelectedProfile");
+					this.NotifyPropertyChanged(nameof(SelectedProfile));
 				}
 			}
 		}
@@ -98,7 +105,7 @@ namespace GTAVModdingLauncher
 				if(this.launcherVersion != value)
 				{
 					this.launcherVersion = value;
-					this.NotifyPropertyChanged("LauncherVersion");
+					this.NotifyPropertyChanged(nameof(LauncherVersion));
 				}
 			}
 		}
@@ -112,7 +119,7 @@ namespace GTAVModdingLauncher
 				if(this.gtaVersion != value)
 				{
 					this.gtaVersion = value;
-					this.NotifyPropertyChanged("GtaVersion");
+					this.NotifyPropertyChanged(nameof(GtaVersion));
 				}
 			}
 		}
@@ -126,39 +133,41 @@ namespace GTAVModdingLauncher
 				if(this.gtaType != value)
 				{
 					this.gtaType = value;
-					this.NotifyPropertyChanged("GtaType");
+					this.NotifyPropertyChanged(nameof(GtaType));
 				}
 			}
 		}
 
+		private bool working;
 		public bool Working
 		{
-			get { return this.window.Progress.Visibility == Visibility.Visible; }
-			set { this.window.Progress.Visibility = value ? Visibility.Visible : Visibility.Hidden; }
+			get => this.working;
+			set
+			{
+				if(this.working != value)
+				{
+					this.working = value;
+					this.NotifyPropertyChanged(nameof(ProgressBarVisibility));
+				}
+			}
 		}
-
-		public double ProgressMaximum
-		{
-			get { return this.window.Progress.Maximum; }
-			set { this.window.Progress.Maximum = value; }
-		}
-
-		public double Progress
-		{
-			get { return this.window.Progress.Value; }
-			set { this.window.Progress.Value = value; }
-		}
-
-		public bool ProgressIndeterminate
-		{
-			get { return this.window.Progress.IsIndeterminate; }
-			set { this.window.Progress.IsIndeterminate = value; }
-		}
+		public Visibility ProgressBarVisibility => this.Working ? Visibility.Visible : Visibility.Hidden;
 
 		public UIManager(MainWindow window)
 		{
 			this.window = window;
 			this.Profiles.Add(I18n.Localize("Random", "Loading"));
+		}
+
+		public void randomizeBackground()
+		{
+			List<ResourcePath> backgrounds = ResourceManager.GetAllResources("*.png");
+			using(Stream img = ResourceManager.GetResourceStream(backgrounds[new Random().Next(backgrounds.Count)]))
+			{
+				MemoryStream mem = new MemoryStream();
+				IOUtil.CopyStream(img, mem);
+				this.window.ImgBg.Source = BitmapFrame.Create(mem, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+			}
 		}
 
 		private void NotifyPropertyChanged(string propertyName)

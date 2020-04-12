@@ -70,8 +70,12 @@ namespace GTAVModdingLauncher
 			vanillaEntries.Add("x64u.rpf");
 			vanillaEntries.Add("x64v.rpf");
 			vanillaEntries.Add("x64w.rpf");
+			//New entries 2019
+			vanillaEntries.Add("gtavlanguageselect.exe");
+			vanillaEntries.Add("index.bin");
+			vanillaEntries.Add("redistributables");
 
-			if(Launcher.Instance.IsSteamVersion())
+			if(Launcher.Instance.Installs.Selected.Type == InstallType.Steam)
 			{
 				Log.Info("Registering Steam files...");
 
@@ -80,23 +84,11 @@ namespace GTAVModdingLauncher
 				vanillaEntries.Add("installscript.vdf");
 				vanillaEntries.Add("steam_api64.dll");
 				vanillaEntries.Add("steam_appid.txt");
-				vanillaEntries.Add("GTAVLanguageSelect.exe");
-			}
-
-			Process process = Process.GetCurrentProcess();
-			DirectoryInfo parent = Directory.GetParent(process.MainModule.FileName);
-
-			if(parent != null && parent.ToString() == Launcher.Instance.GtaPath)
-			{
-				Log.Info("The launcher is running in the GTA V directory. Registering it...");
-				vanillaEntries.Add("pursuitlib.dll");
-				vanillaEntries.Add("license.txt");
-				vanillaEntries.Add(Path.GetFileName(process.MainModule.FileName.ToLower()));
 			}
 
 			fileHashes.Add("x64a.rpf", "683610e269ba60c5fcc7a9f6d1a8bfd5");
 			fileHashes.Add("x64b.rpf", "70af24cd4fe2c8ee58edb902f018a558");
-			fileHashes.Add("x64c.rpf", "2a0f6f1c35ad567fe8e56b9c9cc4e4c6");
+			fileHashes.Add("x64c.rpf", "2a0f6f1c35ad567fe8e56b9c9cc4e4c6"); //TODO: use SHA1 + add common.rpf + do not hardcode this
 			fileHashes.Add("x64d.rpf", "c8757b052ab5079c7749bcce02538b2e");
 			fileHashes.Add("x64e.rpf", "e5416c0b0000dad4014e0c5e9b878ff9");
 			fileHashes.Add("x64f.rpf", "5c6fc965d56ae6d422cd6cbe5a65a3a5");
@@ -121,36 +113,28 @@ namespace GTAVModdingLauncher
 
 		public static bool IsGTAModded()
 		{
-			if(Launcher.Instance.GtaPath != null)
+			foreach(string file in Directory.GetFileSystemEntries(Launcher.Instance.Installs.Selected.Path))
 			{
-				if(Directory.Exists(Launcher.Instance.GtaPath))
+				if(!vanillaEntries.Contains(Path.GetFileName(file).ToLower()))
+					return true;
+			}
+
+			if(Directory.Exists(Path.Combine(Launcher.Instance.Installs.Selected.Path, "update\\x64\\dlcpacks")))
+			{
+				string filename;
+
+				foreach(string file in Directory.GetFileSystemEntries(Path.Combine(Launcher.Instance.Installs.Selected.Path, "update\\x64\\dlcpacks")))
 				{
-					foreach(string file in Directory.GetFileSystemEntries(Launcher.Instance.GtaPath))
+					if(Directory.Exists(file))
 					{
-						if(!vanillaEntries.Contains(Path.GetFileName(file).ToLower()))
+						filename = Path.GetFileName(file).ToLower();
+						if(!filename.StartsWith("mp") && !filename.StartsWith("patchday"))
 							return true;
 					}
-
-					if(Directory.Exists(Path.Combine(Launcher.Instance.GtaPath, "update\\x64\\dlcpacks")))
-					{
-						string filename;
-
-						foreach(string file in Directory.GetFileSystemEntries(Path.Combine(Launcher.Instance.GtaPath, "update\\x64\\dlcpacks")))
-						{
-							if(Directory.Exists(file))
-							{
-								filename = Path.GetFileName(file).ToLower();
-								if(!filename.StartsWith("mp") && !filename.StartsWith("patchday"))
-									return true;
-							}
-						}
-					}
-
-					return false;
 				}
-				throw new ApplicationException("GtaPath doesn't exist.");
 			}
-			else throw new ApplicationException("GtaPath is not set.");
+
+			return false;
 		}
 
 		/// <summary>
@@ -158,25 +142,20 @@ namespace GTAVModdingLauncher
 		/// </summary>
 		public static void ListRootMods(out List<string> files, out List<string> dirs)
 		{
-			if(Launcher.Instance.GtaPath != null)
+			if(Launcher.Instance.Installs.Selected.Path != null)
 			{
-				if(Directory.Exists(Launcher.Instance.GtaPath))
+				if(Directory.Exists(Launcher.Instance.Installs.Selected.Path))
 				{
 					files = new List<string>();
 					dirs = new List<string>();
 
-					foreach(string file in Directory.GetFileSystemEntries(Launcher.Instance.GtaPath))
+					foreach(string file in Directory.EnumerateFileSystemEntries(Launcher.Instance.Installs.Selected.Path))
 					{
 						if(!vanillaEntries.Contains(Path.GetFileName(file).ToLower()))
 						{
 							if(File.Exists(file))
 								files.Add(file);
-							else
-							{
-								dirs.Add(file);
-								dirs.AddRange(Directory.GetDirectories(file, "*", SearchOption.AllDirectories));
-								files.AddRange(Directory.GetFiles(file, "*", SearchOption.AllDirectories));
-							}
+							else dirs.Add(file);
 						}
 					}
 				}
@@ -190,17 +169,17 @@ namespace GTAVModdingLauncher
 		/// </summary>
 		public static List<string> ListDlcMods()
 		{
-			if(Launcher.Instance.GtaPath != null)
+			if(Launcher.Instance.Installs.Selected.Path != null)
 			{
-				if(Directory.Exists(Launcher.Instance.GtaPath))
+				if(Directory.Exists(Launcher.Instance.Installs.Selected.Path))
 				{
 					List<string> mods = new List<string>();
 
-					if(Directory.Exists(Path.Combine(Launcher.Instance.GtaPath, "update\\x64\\dlcpacks")))
+					if(Directory.Exists(Path.Combine(Launcher.Instance.Installs.Selected.Path, "update\\x64\\dlcpacks")))
 					{
 						string filename;
 
-						foreach(string file in Directory.GetFileSystemEntries(Path.Combine(Launcher.Instance.GtaPath, "update\\x64\\dlcpacks")))
+						foreach(string file in Directory.GetFileSystemEntries(Path.Combine(Launcher.Instance.Installs.Selected.Path, "update\\x64\\dlcpacks")))
 						{
 							if(Directory.Exists(file))
 							{
@@ -243,11 +222,11 @@ namespace GTAVModdingLauncher
 		/// </summary>
 		/// <param name="file">The file that needs to be verified</param>
 		/// <returns>The file's current MD5 hash</returns>
-		public static string CalculateFileHash(string file)
+		public static string CalculateFileHash(string file) //TODO async
 		{
 			using(MD5 md5 = MD5.Create())
 			{
-				using(Stream stream = File.OpenRead(Path.Combine(Launcher.Instance.GtaPath, file)))
+				using(Stream stream = File.OpenRead(Path.Combine(Launcher.Instance.Installs.Selected.Path, file)))
 				{
 					return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
 				}
