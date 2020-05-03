@@ -249,7 +249,7 @@ namespace GTAVModdingLauncher
 		{
 			this.Config = new UserConfig();
 
-			//TODO Legacy support
+			//TODO Remove legacy support when not needed anymore
 			string userDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pursuit", "GTA V Modding Launcher");
 
 			if(File.Exists(Path.Combine(userDir, "settings.dat")))
