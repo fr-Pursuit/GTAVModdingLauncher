@@ -42,9 +42,7 @@ namespace GTAVModdingLauncher
 		}
 
 		public bool IsCustom { get; set; }
-
 		public string Path { get; set; }
-
 		public InstallType Type { get; set; }
 
 		public GTAInstall(string path, InstallType type) : this(true, path, type) {}
@@ -54,6 +52,11 @@ namespace GTAVModdingLauncher
 			this.IsCustom = custom;
 			this.Path = path;
 			this.Type = type;
+		}
+
+		public override string ToString()
+		{
+			return this.Path + " [" + this.Type + "]";
 		}
 	}
 }

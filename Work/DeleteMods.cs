@@ -21,9 +21,7 @@ namespace GTAVModdingLauncher.Work
 				if(manager.ProgressDisplay is IJobDisplay)
 					((IJobDisplay) manager.ProgressDisplay).Description = I18n.Localize("Label", "DeletingMods");
 
-				List<string> files;
-				List<string> dirs;
-				GameScanner.ListRootMods(out files, out dirs);
+				GameScanner.ListRootMods(out List<string> files, out List<string> dirs);
 				List<string> dlc = GameScanner.ListDlcMods();
 
 				foreach(string mod in files)

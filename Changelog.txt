@@ -1,8 +1,15 @@
 __0.6.0__
 * The launcher's code has been cleaned
-* The launcher is now using PursuitLib's new Win10 theme (the UI now looks more native)
 * Popups are now handled in a better way
 + Custom installations can now be easily specified in no installation is found
+* The launcher now uses a Modern theme
+* Added support for the new Rockstar Games launcher
++ The launcher can now optionally close the Rockstar Games launcher after launching the game
+* The launcher's UI has been overhauled
+* The launcher can now display the game's news
+* The launcher now uses an external game manifest rather than an hardcoded one
+- The integrity check feature has been removed
+* Profiles are now saved in the launcher's folder
 
 __0.5.7__
 * Fixed a bug where the game was always detected as modded on some Steam versions

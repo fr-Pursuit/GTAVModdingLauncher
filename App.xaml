@@ -2,12 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:pm="clr-namespace:PursuitLib.Windows.WPF.Modern;assembly=PursuitLib.Windows.WPF.Modern"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Ui/MainWindow.xaml">
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="/PursuitLib.Windows.WPF.Modern;component/styles/ModernApp.xaml" />
-				<ResourceDictionary Source="/MahApps.Metro;component/styles/accents/Cobalt.xaml" />
+				<ResourceDictionary Source="/MahApps.Metro;component/styles/accents/Orange.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>

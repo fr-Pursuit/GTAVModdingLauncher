@@ -1,0 +1,31 @@
+﻿<pm:ModernWindow x:Class="GTAVModdingLauncher.Ui.Popup.PopupChooseInstall"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:PursuitLib.Windows.WPF;assembly=PursuitLib.Windows.WPF"
+		xmlns:pm="clr-namespace:PursuitLib.Windows.WPF.Modern;assembly=PursuitLib.Windows.WPF.Modern"
+        mc:Ignorable="d"
+		WindowStartupLocation="CenterScreen"
+        ShowIconOnTitleBar="False"
+        Title="{p:I18n}" Width="500" Height="450">
+	<ListView Name="List" MouseDoubleClick="OnItemDoubleClick" PreviewMouseRightButtonUp="OnItemRightClick">
+		<ListView.Resources>
+			<Style TargetType="GridViewColumnHeader">
+				<Setter Property="Visibility" Value="Collapsed" />
+			</Style>
+		</ListView.Resources>
+		<ListView.View>
+			<GridView>
+				<GridViewColumn Width="90">
+					<GridViewColumn.CellTemplate>
+						<DataTemplate>
+							<Image Width="64" Height="64" Margin="6" Source="{Binding Icon}"/>
+						</DataTemplate>
+					</GridViewColumn.CellTemplate>
+				</GridViewColumn>
+				<GridViewColumn DisplayMemberBinding="{Binding Text}" Width="500" />
+			</GridView>
+		</ListView.View>
+	</ListView>
+</pm:ModernWindow>

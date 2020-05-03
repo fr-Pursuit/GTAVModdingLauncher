@@ -1,5 +1,6 @@
 ﻿using GTAVModdingLauncher.Legacy;
-using GTAVModdingLauncher.Popup;
+using GTAVModdingLauncher.Ui;
+using GTAVModdingLauncher.Ui.Popup;
 using GTAVModdingLauncher.Work;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
@@ -7,13 +8,16 @@ using Newtonsoft.Json.Linq;
 using PursuitLib;
 using PursuitLib.Extensions;
 using PursuitLib.IO;
+using PursuitLib.IO.PPF;
 using PursuitLib.Windows;
 using PursuitLib.Windows.WPF;
 using PursuitLib.Windows.WPF.Dialogs;
+using PursuitLib.Windows.WPF.Modern;
 using PursuitLib.Work;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.OleDb;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -24,9 +28,6 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using PursuitLib.IO.PPF;
-using PursuitLib.Windows.WPF.Modern;
 
 namespace GTAVModdingLauncher
 {
@@ -36,13 +37,13 @@ namespace GTAVModdingLauncher
 	public class Launcher : ModernApp
 	{
 		public static Launcher Instance { get; private set; }
+		private const int GameInitTime = 60000;
+		private const int GameCheckInterval = 5000;
+		private const int GameWaitTimeout = 360000;
 
 		public MainWindow Window { get; private set; } = null;
-		public InstallList Installs { get; private set; }
-		public ProfileList Profiles { get; private set; }
-		public UserSettings Settings { get; private set; }
+		public UserConfig Config { get; private set; }
 		public UIManager UiManager { get; private set; }
-		private readonly BinaryFormatter formatter;
 
 		/// <summary>
 		/// Indicates if the user chose to close the application. <see cref="CloseLauncher"/> <seealso cref="OnWindowClosing"/>
@@ -53,23 +54,22 @@ namespace GTAVModdingLauncher
 		{
 			Instance = this;
 
-			ResourceManager.RegisterProvider("appRsrc", new PPFFile("resources.ppf"));
-
-			//Legacy support
-			this.formatter = new BinaryFormatter();
-			this.formatter.Binder = new LegacyBinder();
+			if(File.Exists("Resources.ppf"))
+				ResourceManager.RegisterProvider("appRsrc", new PPFFile("Resources.ppf"));
 
 			I18n.Initialize();
-			this.Installs = new InstallList();
-			this.LoadSettings();
+			this.LoadConfig();
 
-			if(this.Settings.UseLogFile)
+			if(this.Config.UseLogFile)
 				Log.LogFile = Path.Combine(this.UserDirectory, "latest.log");
 			Log.Info(this.DisplayName);
 			Log.Info("Using PursuitLib " + typeof(Log).GetVersion());
 
 			Log.Info("Loading languages...");
-			I18n.LoadLanguage(this.Settings.Language);
+			I18n.LoadLanguage(this.Config.Language);
+
+			if(!Directory.Exists("Profiles"))
+				Directory.CreateDirectory("Profiles");
 		}
 
 		/// <summary>
@@ -79,118 +79,106 @@ namespace GTAVModdingLauncher
 		{
 			Log.Info("Initializing user interface...");
 			this.Window = window;
+			this.Window.EnsureFitsScreen();
 			this.Window.Closing += OnWindowClosing;
-			this.Window.ProfileList.SelectionChanged += OnSelectionChange;
+			this.Window.Closed += OnWindowClosed;
 			this.Window.AboutButton.Click += ShowAboutPopup;
 			this.Window.SettingsButton.Click += OpenSettingsPopup;
 			this.Window.CreateButton.Click += CreateNewProfile;
-			this.Window.EditButton.Click += EditSelectedProfile;
-			this.Window.ApplyButton.Click += SwitchToSelectedProfile;
-			this.Window.DeleteButton.Click += DeleteSelectedProfile;
-			this.Window.PlayButton.Click += PressPlay;
-			this.Window.PlayOnlineButton.Click += PressPlay;
 			this.UiManager = new UIManager(this.Window);
 			this.UiManager.WindowTitle = this.DisplayName;
 			this.WorkManager.ProgressDisplay = new MultiProgressDisplay((WPFProgressBar)this.Window.Progress, new TaskBarProgress());
 
-			this.UiManager.randomizeBackground();
-
+			this.Theme = this.Config.Theme;
 			this.InitLauncher();
 
-			this.UiManager.Profiles.RemoveAt(0);
-			foreach(string profile in this.Profiles)
-				this.UiManager.Profiles.Add(profile);
-			this.UiManager.SelectedProfile = this.Profiles.CurrentProfile;
-
-			this.UiManager.ButtonsEnabled = true;
-			this.UiManager.CanPlayOnline = this.UiManager.SelectedProfile == 0;
+			this.UiManager.RandomizeBackground();
+			this.UiManager.UpdateProfiles();
+			this.UiManager.UIEnabled = true;
 			this.UiManager.LauncherVersion = "Launcher " + this.Version;
 
 			I18n.Reload += OnI18nReload;
 			this.OnI18nReload(null);
 
-			if(this.Profiles.CurrentProfile >= this.Profiles.Count)
-			{
-				string name = this.GetNewProfileName();
-				string path = Path.Combine(this.Settings.GetProfileFolder(), name);
-
-				if(!Directory.Exists(path))
-					Directory.CreateDirectory(path);
-
-				this.Profiles.Add(name);
-				this.Profiles.CurrentProfile = this.Profiles.Count - 1;
-				this.UiManager.Profiles.Add(name);
-				this.UiManager.SelectedProfile = this.Profiles.CurrentProfile;
-				this.SaveProfiles();
-
-				MessageDialog.Show(this.Window, I18n.Localize("Dialog", "InvalidActiveProfile", new object[] { name }), I18n.Localize("Dialog.Caption", "Warn"), TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
-			}
-
-			if(this.Settings.CheckUpdates)
-			{
+			if(this.Config.DisplayNews)
+				this.Window.News.StartCycle();
+			if(this.Config.CheckUpdates)
 				this.WorkManager.StartWork(CheckUpdates);
-			}
 		}
 
 		private void InitLauncher()
 		{
 			Log.Info("Initializing launcher...");
-
 			SteamHelper.Initialize();
 
-			if(this.Installs.Selected == null)
+			if(this.Config.SelectedInstall == null)
 			{
 				GTAInstall[] installs = GTAInstall.FindInstalls();
 
 				if(installs.Length > 0)
-					this.Installs.Selected = installs[0];
+					this.Config.SelectedInstall = installs[0];
 				else
 				{
 					LocalizedMessage.Show("GTANotFound", "Info", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Ok);
 					new PopupChooseInstall().ShowDialog();
 
-					if(this.Installs.Selected == null)
+					if(this.Config.SelectedInstall == null)
 					{
-						Process.GetCurrentProcess().Kill();
+						Environment.Exit(1);
 						return;
 					}
 				}
 
-				this.Installs.Save();
+				this.Config.Save();
 			}
 
-			Log.Info("Using GTA V installation at " + this.Installs.Selected.Path);
-			Log.Info("Installation type: " + this.Installs.Selected.Type);
+			Log.Info("Using GTA V installation at " + this.Config.SelectedInstall.Path);
+			Log.Info("Installation type: " + this.Config.SelectedInstall.Type);
 
-			if(Path.GetFullPath(this.WorkingDirectory).Equals(Path.GetFullPath(this.Installs.Selected.Path)))
+			if(Path.GetFullPath(this.WorkingDirectory).Equals(Path.GetFullPath(this.Config.SelectedInstall.Path)))
 			{
 				LocalizedMessage.Show("InstalledInGTA", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
-				Process.GetCurrentProcess().Kill();
+				Environment.Exit(1);
 			}
 
 			GameScanner.Init();
 
-			if(File.Exists(Path.Combine(this.UserDirectory, "profiles.dat")))
+			Log.Info("Loading profiles...");
+
+			string profilesDir = Path.Combine(this.UserDirectory, "Profiles");
+
+			if(!Directory.Exists(profilesDir))
+				Directory.CreateDirectory(profilesDir);
+
+			if(this.Config.VanillaProfile == null)
 			{
-				try
-				{
-					using(Stream stream = File.Open(Path.Combine(this.UserDirectory, "profiles.dat"), FileMode.Open))
-					{
-						this.Profiles = (ProfileList) formatter.Deserialize(stream);
-					}
-				}
-				catch(Exception ex)
-				{
-					Log.Error("Unable to read saved profiles.");
-					Log.Error(ex.ToString());
-					LocalizedMessage.Show("ReadProfilesError", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
-					this.CreateDefaultProfiles();
-				}
+				Log.Info("Vanilla profile not found. Creating it");
+				this.Config.Profiles.Add(new Profile("Vanilla", true));
 			}
-			else
+
+			foreach(string dir in Directory.EnumerateDirectories(profilesDir))
 			{
-				Log.Info("No profiles.dat file found.");
-				this.CreateDefaultProfiles();
+				string name = Path.GetFileName(dir);
+				if(!this.Config.ProfileExists(name))
+					this.Config.Profiles.Add(new Profile(name));
+			}
+
+			if(this.Config.Profile == null)
+			{
+				Log.Info("Current profile is invalid");
+
+				if(GameScanner.IsGTAModded())
+				{
+					Log.Info("GTA is currently modded: creating new modded profile");
+					Profile profile = new Profile(this.GetNewProfileName());
+					this.Config.Profiles.Add(profile);
+					this.Config.Profile = profile;
+				}
+				else
+				{
+					Log.Info("GTA is currently not modded: considering the game vanilla");
+					this.Config.CurrentProfile = this.Config.VanillaProfile.Name;
+				}
 			}
 		}
 
@@ -200,7 +188,6 @@ namespace GTAVModdingLauncher
 			if(obj != null)
 				this.Window.Dispatcher.Invoke(() => ShowUpdatePopup(this.Window, obj));
 		}
-
 
 		/// <summary>
 		/// Checks whether the software is up to date or not
@@ -243,8 +230,9 @@ namespace GTAVModdingLauncher
 		/// <summary>
 		/// Shows a popup telling the user a new update is out.
 		/// </summary>
+		/// <param name="window">The parent window</param>
 		/// <param name="obj">A JObject representing the update</param>
-		public void ShowUpdatePopup(Window window, JObject obj) //TODO use RFS
+		public void ShowUpdatePopup(Window window, JObject obj)
 		{
 			if(this.Window.CheckAccess())
 			{
@@ -257,55 +245,62 @@ namespace GTAVModdingLauncher
 			else this.Window.Dispatcher.Invoke(() => ShowUpdatePopup(window, obj));
 		}
 
-		private void LoadSettings()
+		private void LoadConfig()
 		{
-			if(File.Exists(Path.Combine(this.UserDirectory, "settings.dat")))
+			this.Config = new UserConfig();
+
+			//TODO Legacy support
+			string userDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pursuit", "GTA V Modding Launcher");
+
+			if(File.Exists(Path.Combine(userDir, "settings.dat")))
 			{
 				try
 				{
-					using(Stream stream = File.Open(Path.Combine(this.UserDirectory, "settings.dat"), FileMode.Open))
+					Log.Info("Legacy config file found. Converting it...");
+
+					string profilesFolder = Path.Combine(this.UserDirectory, "Profiles");
+					if(!Directory.Exists(profilesFolder))
+						Directory.CreateDirectory(profilesFolder);
+
+					string oldProfiles = userDir;
+
+					using(Stream stream = File.Open(Path.Combine(userDir, "settings.dat"), FileMode.Open))
 					{
-						Instance.Settings = (UserSettings)formatter.Deserialize(stream);
+						//Legacy support
+						BinaryFormatter formatter = new BinaryFormatter();
+						formatter.Binder = new LegacyBinder();
+						UserSettings settings = (UserSettings)formatter.Deserialize(stream);
+
+						this.Config.UseRph = settings.UseRph;
+						this.Config.DeleteLogs = settings.DeleteLogs;
+						this.Config.OfflineMode = settings.OfflineMode;
+						this.Config.CheckUpdates = settings.CheckUpdates;
+						this.Config.UseLogFile = settings.UseLogFile;
+						this.Config.Language = settings.Language;
+						this.Config.GtaLanguage = settings.GtaLanguage;
+						this.Config.Save();
+
+						if(settings.CustomFolder != null)
+							oldProfiles = settings.CustomFolder;
 					}
 
-					if(!Directory.Exists(Instance.Settings.GetProfileFolder()))
-						Directory.CreateDirectory(Instance.Settings.GetProfileFolder());
+					if(Directory.Exists(oldProfiles))
+					{
+						Log.Info("Legacy profiles found. Moving them...");
+
+						foreach(string dir in Directory.EnumerateDirectories(oldProfiles))
+							this.WorkManager.QueueJob(new MoveJob(dir, Path.Combine(this.UserDirectory, "Profiles", Path.GetFileName(dir))));
+
+						new PerformJobsDialog(this.WorkManager).Show();
+					}
+
+					File.Delete(Path.Combine(userDir, "settings.dat"));
 				}
 				catch(Exception ex)
 				{
-					Log.Error("Unable to read settings.");
+					Log.Error("Unable to read legacy settings.");
 					Log.Error(ex.ToString());
-					Instance.Settings = new UserSettings();
-					this.SaveSettings();
-					return;
 				}
-			}
-			else
-			{
-				Log.Info("No settings.dat file found.");
-				Instance.Settings = new UserSettings();
-				this.SaveSettings();
-			}
-		}
-
-		public void SaveSettings()
-		{
-			try
-			{
-				if(!Directory.Exists(this.UserDirectory))
-					Directory.CreateDirectory(this.UserDirectory);
-
-				using(Stream stream = File.Open(Path.Combine(this.UserDirectory, "settings.dat"), FileMode.Create))
-				{
-					formatter.Serialize(stream, this.Settings);
-				}
-
-				Log.Info("Settings saved.");
-			}
-			catch(Exception ex)
-			{
-				Log.Error("Unable to save settings.");
-				Log.Error(ex.ToString());
 			}
 		}
 
@@ -315,9 +310,11 @@ namespace GTAVModdingLauncher
 		/// <returns>true if the game can be launched, false otherwise</returns>
 		public bool CheckCurrentProfile()
 		{
-			if(Instance.Profiles.CurrentProfile == 0 && GameScanner.IsGTAModded())
+			Profile currentProfile = this.Config.Profile;
+
+			if(currentProfile.IsVanilla && GameScanner.IsGTAModded())
 			{
-				Log.Warn("GTA V is modded while the selected profile is \"Vanilla\" !");
+				Log.Warn("GTA V is modded, but the vanilla profile is selected !");
 
 				TaskDialogResult result = LocalizedMessage.Show(this.Window, "ModsOnVanilla", "Warn", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Yes | TaskDialogStandardButtons.No | TaskDialogStandardButtons.Cancel);
 
@@ -325,15 +322,12 @@ namespace GTAVModdingLauncher
 				{
 					string name = this.GetNewProfileName();
 
-					this.Window.Dispatcher.Invoke(() =>
-					{
-						this.Profiles.Add(name);
-						this.Profiles.CurrentProfile = Instance.Profiles.Count - 1;
-						this.UiManager.Profiles.Add(name);
-						this.UiManager.SelectedProfile = this.UiManager.Profiles.Count - 1;
-						this.SaveProfiles();
-					});
-
+					Profile profile = new Profile(name);
+					this.Config.Profiles.Add(profile);
+					this.Config.Profile = profile;
+					this.Config.Save();
+					this.UiManager.AddProfile(profile);
+					this.UiManager.UpdateActiveProfile();
 					return true;
 				}
 				else if(result == TaskDialogResult.No)
@@ -343,9 +337,9 @@ namespace GTAVModdingLauncher
 				}
 				else return false;
 			}
-			else if(Instance.Profiles.CurrentProfile != 0 && Directory.Exists(Path.Combine(this.Settings.GetProfileFolder(), this.Profiles[this.Profiles.CurrentProfile])))
+			else if(!currentProfile.IsVanilla && Directory.Exists(currentProfile.ExtFolder))
 			{
-				string path = Path.Combine(this.Settings.GetProfileFolder(), this.Profiles[this.Profiles.CurrentProfile]);
+				string path = currentProfile.ExtFolder;
 
 				if(Directory.GetFileSystemEntries(path).GetLength(0) != 0)
 				{
@@ -357,15 +351,15 @@ namespace GTAVModdingLauncher
 						List<string> dlcMods = GameScanner.ListDlcMods();
 
 						foreach(string dir in modDirs)
-							this.WorkManager.QueueJob(new MoveJob(dir, dir.Replace(this.Installs.Selected.Path, path)));
+							this.WorkManager.QueueJob(new MoveJob(dir, dir.Replace(this.Config.SelectedInstall.Path, path)));
 						foreach(string file in modFiles)
 						{
-							if(this.Settings.DeleteLogs && file.EndsWith(".log"))
+							if(this.Config.DeleteLogs && file.EndsWith(".log"))
 								this.WorkManager.QueueJob(new DeleteJob(file));
-							else this.WorkManager.QueueJob(new MoveJob(file, file.Replace(this.Installs.Selected.Path, path)));
+							else this.WorkManager.QueueJob(new MoveJob(file, file.Replace(this.Config.SelectedInstall.Path, path)));
 						}
 						foreach(string mod in dlcMods)
-							this.WorkManager.QueueJob(new MoveJob(mod, mod.Replace(this.Installs.Selected.Path, path)));
+							this.WorkManager.QueueJob(new MoveJob(mod, mod.Replace(this.Config.SelectedInstall.Path, path)));
 
 						new PerformJobsDialog(this.WorkManager).Show();
 					}
@@ -378,9 +372,9 @@ namespace GTAVModdingLauncher
 
 		public bool CanLaunchGame()
 		{
-			if(this.Installs.Selected.Type == InstallType.Retail)
+			if(this.Config.SelectedInstall.Type == InstallType.Retail)
 			{
-				if(File.Exists(Path.Combine(this.Installs.Selected.Path, "GTA5.exe")))
+				if(File.Exists(Path.Combine(this.Config.SelectedInstall.Path, "GTA5.exe")))
 					return true;
 				else
 				{
@@ -388,7 +382,7 @@ namespace GTAVModdingLauncher
 					return false;
 				}
 			}
-			else if(this.Installs.Selected.Type == InstallType.Steam)
+			else if(this.Config.SelectedInstall.Type == InstallType.Steam)
 			{
 				if(SteamHelper.IsAvailable)
 					return true;
@@ -407,74 +401,33 @@ namespace GTAVModdingLauncher
 		/// <returns>A generic profile name that doesn't already exist</returns>
 		public string GetNewProfileName()
 		{
-			if(this.Profiles.Contains("ModdedState"))
+			string baseName = I18n.Localize("Random", "ModdedProfile");
+
+			if(this.Config.ProfileExists(baseName))
 			{
 				int i = 0;
-				while(this.Profiles.Contains("ModdedState"+i))
+				while(this.Config.ProfileExists(baseName + i))
 					i++;
-				return "ModdedState"+i;
+				return baseName + i;
 			}
-			else return "ModdedState";
-		}
-
-		private void CreateDefaultProfiles()
-		{
-			Log.Info("Creating default profiles.");
-			if(Directory.Exists(Path.Combine(this.UserDirectory, "profiles.dat")))
-				Directory.Delete(Path.Combine(this.UserDirectory, "profiles.dat"));
-
-			this.Profiles = new ProfileList();
-			this.Profiles.Add("Vanilla");
-
-			bool isModded = GameScanner.IsGTAModded();
-			if(isModded)
-			{
-				Log.Info("GTA V is currently modded.");
-				this.Profiles.Add("Modded");
-			}
-			else Log.Info("GTA V is not currently modded");
-
-			this.Profiles.CurrentProfile = isModded ? 1 : 0;
-
-			this.SaveProfiles();
-		}
-
-		public void SaveProfiles()
-		{
-			try
-			{
-				if(!Directory.Exists(this.UserDirectory))
-					Directory.CreateDirectory(this.UserDirectory);
-
-				using(Stream stream = File.Open(Path.Combine(this.UserDirectory, "profiles.dat"), FileMode.Create))
-				{
-					formatter.Serialize(stream, this.Profiles);
-				}
-
-				Log.Info("Profiles saved.");
-			}
-			catch(Exception ex)
-			{
-				Log.Error("Unable to save profiles.");
-				Log.Error(ex.ToString());
-			}
+			else return baseName;
 		}
 
 		public void UpdateGameInfo()
 		{
-			string exePath = Path.Combine(this.Installs.Selected.Path, "GTA5.exe");
+			string exePath = Path.Combine(this.Config.SelectedInstall.Path, "GTA5.exe");
 
 			if(File.Exists(exePath))
 				this.UiManager.GtaVersion = "GTA V " + FileVersionInfo.GetVersionInfo(exePath).FileVersion;
 
-			if(this.Installs.Selected.Type == InstallType.Steam)
+			if(this.Config.SelectedInstall.Type == InstallType.Steam)
 				this.UiManager.GtaType = I18n.Localize("Label", "SteamVersion");
-			else if(this.Installs.Selected.Type == InstallType.Retail)
+			else if(this.Config.SelectedInstall.Type == InstallType.Retail)
 				this.UiManager.GtaType = I18n.Localize("Label", "RetailVersion");
 
-			if(Directory.Exists(this.Installs.Selected.Path))
+			if(Directory.Exists(this.Config.SelectedInstall.Path))
 			{
-				DirectoryInfo dir = new DirectoryInfo(this.Installs.Selected.Path);
+				DirectoryInfo dir = new DirectoryInfo(this.Config.SelectedInstall.Path);
 				DirectorySecurity sec = dir.GetAccessControl();
 
 				IdentityReference id = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
@@ -503,8 +456,6 @@ namespace GTAVModdingLauncher
 					{
 						Log.Info("Asking for elevated privileges...");
 
-						Process process = Process.GetCurrentProcess();
-
 						if(LocalizedCMessage.Show(this.Window, "LauncherNeedsPerms", "Info", TaskDialogStandardIcon.Shield, new DialogButton("Ok", true), "Cancel") == "Ok")
 						{
 							ProcessBuilder builder = new ProcessBuilder(Assembly.GetEntryAssembly().Location);
@@ -512,7 +463,7 @@ namespace GTAVModdingLauncher
 							builder.StartProcess();
 						}
 
-						process.Kill();
+						Environment.Exit(0);
 					}
 				}
 			}
@@ -523,47 +474,50 @@ namespace GTAVModdingLauncher
 		/// Change the active profile and move the mods accordingly
 		/// </summary>
 		/// <param name="selected"></param>
-		private void SwitchProfileTo(int selected)
+		public void SwitchProfileTo(Profile selected)
 		{
-			if(this.Profiles.CurrentProfile != selected)
+			if(this.Config.Profile != selected)
 			{
+				Profile oldProfile = this.Config.Profile;
+
 				this.UiManager.Working = true;
 
-				Log.Info("Switching from profile '" + this.Profiles[this.Profiles.CurrentProfile] + "' to '" + this.Profiles[selected] + "'.");
+				Log.Info("Switching from profile '" + oldProfile + "' to '" + selected + "'.");
 				this.WorkManager.ProgressDisplay.ProgressState = ProgressState.Indeterminate;
 
 				try
 				{
-					if(this.Profiles.CurrentProfile != 0)
+					if(!oldProfile.IsVanilla)
 					{
-						string profilePath = Path.Combine(this.Settings.GetProfileFolder(), this.Profiles[this.Profiles.CurrentProfile]);
+						string profilePath = oldProfile.ExtFolder;
 						GameScanner.ListRootMods(out List<string> modFiles, out List<string> modDirs);
 						List<string> dlcMods = GameScanner.ListDlcMods();
 
 						foreach(string dir in modDirs)
-							this.WorkManager.QueueJob(new MoveJob(dir, dir.Replace(this.Installs.Selected.Path, profilePath)));
+							this.WorkManager.QueueJob(new MoveJob(dir, dir.Replace(this.Config.SelectedInstall.Path, profilePath)));
 						foreach(string file in modFiles)
 						{
-							if(this.Settings.DeleteLogs && file.EndsWith(".log"))
+							if(this.Config.DeleteLogs && file.EndsWith(".log"))
 								this.WorkManager.QueueJob(new DeleteJob(file));
-							else this.WorkManager.QueueJob(new MoveJob(file, file.Replace(this.Installs.Selected.Path, profilePath)));
+							else this.WorkManager.QueueJob(new MoveJob(file, file.Replace(this.Config.SelectedInstall.Path, profilePath)));
 						}
 						foreach(string mod in dlcMods)
-							this.WorkManager.QueueJob(new MoveJob(mod, mod.Replace(this.Installs.Selected.Path, profilePath)));
+							this.WorkManager.QueueJob(new MoveJob(mod, mod.Replace(this.Config.SelectedInstall.Path, profilePath)));
 					}
 
-					if(selected != 0)
+					if(!selected.IsVanilla)
 					{
-						string profilePath = Path.Combine(this.Settings.GetProfileFolder(), this.Profiles[selected]);
+						string profilePath = selected.ExtFolder;
 
 						foreach(string entry in Directory.GetFileSystemEntries(profilePath))
-							this.WorkManager.QueueJob(new MoveJob(entry, Path.Combine(this.Installs.Selected.Path, Path.GetFileName(entry))));
+							this.WorkManager.QueueJob(new MoveJob(entry, Path.Combine(this.Config.SelectedInstall.Path, Path.GetFileName(entry))));
 					}
 
 					this.WorkManager.PerformJobs();
 
-					this.Profiles.CurrentProfile = selected;
-					this.SaveProfiles();
+					this.Config.Profile = selected;
+					this.Config.Save();
+					this.UiManager.UpdateActiveProfile();
 				}
 				catch(IOException e)
 				{
@@ -577,30 +531,30 @@ namespace GTAVModdingLauncher
 			}
 		}
 
-		private void LaunchGame(bool online)
+		public void LaunchGame(bool online)
 		{
 			Log.Info("Launching game...");
+			Profile profile = this.Config.Profile;
 
 			if(this.CanLaunchGame() && this.CheckCurrentProfile())
 			{
-				if(online && this.Profiles.CurrentProfile != 0)
+				if(online && !profile.IsVanilla)
 				{
 					LocalizedMessage.Show(this.Window, "CantPlayOnline", "Impossible", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
 					this.UiManager.Working = false;
-					this.UiManager.ButtonsEnabled = true;
-					this.UiManager.CanPlayOnline = this.UiManager.SelectedProfile == 0;
+					this.UiManager.UIEnabled = true;
 				}
 				else
 				{
 					ProcessBuilder builder = new ProcessBuilder();
-					builder.WorkingDirectory = this.Installs.Selected.Path;
+					builder.WorkingDirectory = this.Config.SelectedInstall.Path;
 
-					if(this.Settings.UseRph && File.Exists(Path.Combine(this.Installs.Selected.Path, "RAGEPluginHook.exe")))
+					if(this.Config.UseRph && File.Exists(Path.Combine(this.Config.SelectedInstall.Path, "RAGEPluginHook.exe")))
 					{
 						Log.Info("Starting RAGE Plugin Hook process...");
-						builder.FilePath = Path.Combine(this.Installs.Selected.Path, "RAGEPluginHook.exe");
+						builder.FilePath = Path.Combine(this.Config.SelectedInstall.Path, "RAGEPluginHook.exe");
 					}
-					else if(this.Installs.Selected.Type == InstallType.Steam)
+					else if(this.Config.SelectedInstall.Type == InstallType.Steam)
 					{
 						Log.Info("Starting steam game process...");
 						builder.FilePath = SteamHelper.ExecutablePath;
@@ -609,19 +563,50 @@ namespace GTAVModdingLauncher
 					else
 					{
 						Log.Info("Starting game process...");
-						builder.FilePath = Path.Combine(this.Installs.Selected.Path, "GTAVLauncher.exe");
+						builder.FilePath = Path.Combine(this.Config.SelectedInstall.Path, "GTAVLauncher.exe");
 					}
 
-					Log.Info("Setting game language to " + this.Settings.GtaLanguage);
-					builder.AddArgument("-uilanguage " + this.Settings.GtaLanguage);
+					Log.Info("Setting game language to " + this.Config.GtaLanguage);
+					builder.AddArgument("-uilanguage " + this.Config.GtaLanguage);
 
 					if(online)
 						builder.AddArgument("-StraightIntoFreemode");
-					else if(this.Profiles.CurrentProfile != 0 && this.Settings.OfflineMode)
+					else if(!profile.IsVanilla && this.Config.OfflineMode)
 						builder.AddArgument("-scOfflineOnly");
 
 					Log.Info("Executing "+builder);
 					builder.StartProcess();
+
+					this.Window.Dispatcher.Invoke(() => this.Window.Visibility = Visibility.Hidden);
+					
+					if(this.Config.KillLauncher)
+					{
+						Log.Info("Waiting for game to launch...");
+						long start = Environment.TickCount;
+
+						while(true)
+						{
+							if(Process.GetProcessesByName("GTA5").Length > 0)
+							{
+								Process process = Process.GetProcessesByName("GTA5")[0];
+								if(DateTime.Now - process.StartTime > TimeSpan.FromMilliseconds(GameInitTime))
+								{
+									Log.Info("Closing Rockstar launcher");
+									ProcessUtil.Kill("GTAVLauncher");
+									ProcessUtil.Kill("LauncherPatcher");
+									ProcessUtil.Kill("Launcher");
+									break;
+								}
+							}
+							else Thread.Sleep(GameCheckInterval);
+
+							if(Environment.TickCount - start > GameWaitTimeout)
+							{
+								Log.Warn("The game wasn't launched properly.");
+								break;
+							}
+						}
+					}
 
 					this.CloseLauncher();
 				}
@@ -630,41 +615,8 @@ namespace GTAVModdingLauncher
 			{
 				Log.Info("Aborting game launch.");
 				this.UiManager.Working = false;
-				this.UiManager.ButtonsEnabled = true;
-				this.UiManager.CanPlayOnline = this.UiManager.SelectedProfile == 0;
+				this.UiManager.UIEnabled = true;
 			}
-		}
-
-		private void PressPlay(object sender, EventArgs e)
-		{
-			bool online = ((Button)sender).Name == "PlayOnlineButton";
-			Log.Info("Starting " + (online ? "online" : "normal") + " game launch process...");
-
-			this.UiManager.CanApplyChanges = false;
-			this.UiManager.ButtonsEnabled = false;
-			this.UiManager.CanPlayOnline = false;
-
-			this.WorkManager.StartWork(() =>
-			{
-				if(this.UiManager.SelectedProfile != this.Profiles.CurrentProfile)
-					this.SwitchProfileTo(this.UiManager.SelectedProfile);
-				this.LaunchGame(online);
-			});
-		}
-
-		private void OnSelectionChange(object sender, EventArgs e)
-		{
-			if(this.UiManager.SelectedProfile == -1)
-			{
-				this.UiManager.SelectedProfile = this.UiManager.LastSelectedProfile;
-				return;
-			}
-
-			this.UiManager.CanPlayOnline = this.UiManager.SelectedProfile == 0;
-			this.UiManager.CanApplyChanges = this.Profiles.CurrentProfile != this.UiManager.SelectedProfile;
-
-			this.UiManager.LastSelectedProfile = this.UiManager.SelectedProfile;
-			Log.Info("Selecting profile "+this.UiManager.SelectedProfile);
 		}
 
 		private void CreateNewProfile(object sender, EventArgs e)
@@ -675,28 +627,29 @@ namespace GTAVModdingLauncher
 
 		private void EditSelectedProfile(object sender, EventArgs e)
 		{
-			if(this.UiManager.SelectedProfile != 0)
+			/*if(this.UiManager.SelectedProfile != 0)
 			{
 				PopupEdit popup = new PopupEdit(this.Window, this.UiManager.SelectedProfile, this.UiManager.Profiles[this.UiManager.SelectedProfile]);
 				popup.ShowDialog();
 			}
 			else LocalizedMessage.Show(this.Window, "CantEditProfile", "Impossible", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
+			*/
 		}
 
 		private void SwitchToSelectedProfile(object sender, RoutedEventArgs e)
 		{
-			this.UiManager.CanApplyChanges = false;
+			/*this.UiManager.CanApplyChanges = false;
 			this.WorkManager.StartWork(() =>
 			{
-				this.UiManager.ButtonsEnabled = false;
+				this.UiManager.UIEnabled = false;
 				this.SwitchProfileTo(this.UiManager.SelectedProfile);
-				this.UiManager.ButtonsEnabled = true;
-			});
+				this.UiManager.UIEnabled = true;
+			});*/
 		}
 
 		private void DeleteSelectedProfile(object sender, EventArgs e)
 		{
-			if(this.UiManager.SelectedProfile == 0)
+			/*if(this.UiManager.SelectedProfile == 0)
 				LocalizedMessage.Show(this.Window, "CantDeleteProfile", "Impossible", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
 			else
 			{
@@ -706,8 +659,8 @@ namespace GTAVModdingLauncher
 				{
 					string selected = this.UiManager.Profiles[this.UiManager.SelectedProfile];
 					int index = this.UiManager.SelectedProfile;
-					if(Directory.Exists(Path.Combine(this.Settings.GetProfileFolder(),  selected)))
-						IOUtil.Delete(Path.Combine(this.Settings.GetProfileFolder(), selected));
+					if(Directory.Exists(Path.Combine(this.Config.GetProfileFolder(),  selected)))
+						IOUtil.Delete(Path.Combine(this.Config.GetProfileFolder(), selected));
 					this.Profiles.Remove(selected);
 					this.UiManager.Profiles.Remove(selected);
 
@@ -720,9 +673,9 @@ namespace GTAVModdingLauncher
 						this.Profiles.CurrentProfile--;
 					this.UiManager.SelectedProfile = this.Profiles.CurrentProfile;
 					
-					this.SaveProfiles();
+					this.Config.Save();
 				}
-			}
+			}*/
 		}
 
 		public void CloseLauncher()
@@ -758,19 +711,11 @@ namespace GTAVModdingLauncher
 			try
 			{
 				report.Append("Is window initialized: " + (this.Window != null) + '\n');
-				if(this.Profiles != null)
+
+				if(this.Config != null)
 				{
-					report.Append("Current profile index: " + this.Profiles.CurrentProfile + '\n');
-					report.Append("Current profile: ");
-					try
-					{
-						report.Append(this.Profiles[this.Profiles.CurrentProfile]);
-					}
-					catch(Exception)
-					{
-						report.Append("~Unexpected error~");
-					}
-					report.Append('\n');
+					report.Append("Install: " + this.Config.SelectedInstall);
+					report.Append("Current profile: " + this.Config.Profile);
 				}
 			}
 			catch(Exception)
@@ -785,19 +730,8 @@ namespace GTAVModdingLauncher
 			{
 				if(this.UiManager != null)
 				{
-					report.Append("Selected profile index: " + this.UiManager.SelectedProfile + '\n');
-					report.Append("Selected profile: ");
-					try
-					{
-						report.Append(this.Profiles[this.UiManager.SelectedProfile]);
-					}
-					catch(Exception)
-					{
-						report.Append("~Unexpected error~");
-					}
-					report.Append('\n');
 					report.Append("Is working: " + this.UiManager.Working + '\n');
-					report.Append("Are buttons enabled: " + this.UiManager.ButtonsEnabled + '\n');
+					report.Append("Are buttons enabled: " + this.UiManager.UIEnabled + '\n');
 				}
 				else report.Append("Unable to get UI state");
 			}
@@ -814,6 +748,14 @@ namespace GTAVModdingLauncher
 				e.Cancel = true;
 				LocalizedMessage.Show(this.Window, "LauncherWorking", "Impossible", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Ok);
 			}
+		}
+
+		private void OnWindowClosed(object sender, EventArgs e)
+		{
+			this.Window.News.Dispose();
+
+			if(this.Config.Dirty)
+				this.Config.Save();
 		}
 	}
 }

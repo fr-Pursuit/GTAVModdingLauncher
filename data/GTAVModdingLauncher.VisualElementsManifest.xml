@@ -1,0 +1,6 @@
+<Application>
+      <VisualElements
+      BackgroundColor="#ff992b"
+      ShowNameOnSquare150x150Logo="on"
+      ForegroundText="dark" />
+</Application>

@@ -46,8 +46,20 @@
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
+    <Reference Include="GTANews">
+      <HintPath>..\..\..\Libraries\GTANews\bin\Release\GTANews.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro.IconPacks.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
+      <HintPath>packages\MahApps.Metro.IconPacks.Octicons.4.0.0\lib\net47\MahApps.Metro.IconPacks.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro.IconPacks.Modern, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
+      <HintPath>packages\MahApps.Metro.IconPacks.Modern.4.0.0\lib\net47\MahApps.Metro.IconPacks.Modern.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro.IconPacks.Octicons, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
+      <HintPath>packages\MahApps.Metro.IconPacks.Octicons.4.0.0\lib\net47\MahApps.Metro.IconPacks.Octicons.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>..\..\..\Libraries\WindowsAPICodePack\Core\bin\Release\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -56,7 +68,7 @@
       <HintPath>..\..\..\Libraries\WindowsAPICodePack\Shell\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PursuitLib, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -98,32 +110,42 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GameFile.cs" />
     <Compile Include="GTAInstall.cs" />
-    <Compile Include="InstallList.cs" />
     <Compile Include="InstallType.cs" />
     <Compile Include="Legacy\LegacyBinder.cs" />
-    <Compile Include="Legacy\ProfileList.cs" />
     <Compile Include="Legacy\UserSettings.cs" />
-    <Compile Include="Popup\InstallEntry.cs" />
-    <Compile Include="Popup\PopupChooseInstall.xaml.cs">
+    <Compile Include="Profile.cs" />
+    <Compile Include="Ui\NewsBox.xaml.cs">
+      <DependentUpon>NewsBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\NewsEntry.xaml.cs">
+      <DependentUpon>NewsEntry.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\Popup\InstallEntry.cs" />
+    <Compile Include="Ui\Popup\PopupChooseInstall.xaml.cs">
       <DependentUpon>PopupChooseInstall.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popup\PopupCustomInstall.xaml.cs">
+    <Compile Include="Ui\Popup\PopupCustomInstall.xaml.cs">
       <DependentUpon>PopupCustomInstall.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popup\PopupCreate.xaml.cs">
+    <Compile Include="Ui\Popup\PopupCreate.xaml.cs">
       <DependentUpon>PopupCreate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popup\PopupEdit.xaml.cs">
+    <Compile Include="Ui\Popup\PopupEdit.xaml.cs">
       <DependentUpon>PopupEdit.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popup\PopupSettings.xaml.cs">
+    <Compile Include="Ui\Popup\PopupSettings.xaml.cs">
       <DependentUpon>PopupSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="SteamHelper.cs" />
-    <Compile Include="UIManager.cs" />
+    <Compile Include="Ui\ProfileEntry.xaml.cs">
+      <DependentUpon>ProfileEntry.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\UIManager.cs" />
+    <Compile Include="UserConfig.cs" />
     <Compile Include="Work\DeleteMods.cs" />
-    <Page Include="MainWindow.xaml">
+    <Page Include="Ui\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -132,27 +154,39 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Launcher.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Ui\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Popup\PopupChooseInstall.xaml">
+    <Page Include="Ui\NewsBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popup\PopupCustomInstall.xaml">
+    <Page Include="Ui\NewsEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popup\PopupCreate.xaml">
+    <Page Include="Ui\Popup\PopupChooseInstall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popup\PopupEdit.xaml">
+    <Page Include="Ui\Popup\PopupCustomInstall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popup\PopupSettings.xaml">
+    <Page Include="Ui\Popup\PopupCreate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\Popup\PopupEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\Popup\PopupSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\ProfileEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -205,31 +239,45 @@
     <EmbeddedResource Include="libraries\Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\about.png" />
-    <Resource Include="resources\createProfile.png" />
-    <Resource Include="resources\deleteProfile.png" />
-    <Resource Include="resources\editProfile.png" />
     <Resource Include="resources\folder.png" />
-    <Resource Include="resources\settings.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="libraries\Microsoft.WindowsAPICodePack.dll" />
     <EmbeddedResource Include="libraries\Microsoft.WindowsAPICodePack.Shell.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\new.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="resources\retail.png" />
     <Resource Include="resources\steam.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\apply.png" />
+    <Resource Include="resources\new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="libraries\ControlzEx.dll" />
+    <EmbeddedResource Include="libraries\CSharpImageLibrary.dll" />
+    <EmbeddedResource Include="libraries\GTANews.dll" />
+    <EmbeddedResource Include="libraries\MahApps.Metro.dll" />
+    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.Core.dll" />
+    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.Modern.dll" />
+    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.Octicons.dll" />
+    <EmbeddedResource Include="libraries\PursuitLib.dll" />
+    <EmbeddedResource Include="libraries\PursuitLib.Windows.dll" />
+    <EmbeddedResource Include="libraries\PursuitLib.Windows.WPF.dll" />
+    <EmbeddedResource Include="libraries\PursuitLib.Windows.WPF.Modern.dll" />
+    <EmbeddedResource Include="libraries\System.Threading.Tasks.Dataflow.dll" />
+    <EmbeddedResource Include="libraries\System.Windows.Interactivity.dll" />
+    <EmbeddedResource Include="libraries\UsefulThings.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release (
+injectlibloader "C:\Sami\Pursuit\CSharp\Tools\InternalLibLoader\InternalLibLoader\bin\Release\InternalLibLoader.dll" "$(TargetPath)"
+)</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>if $(ConfigurationName) == Release (
+updateinternallibs $(ProjectDir)
+)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

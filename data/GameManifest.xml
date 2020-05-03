@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<List xmlns:m="meta">
+	<GameFile Name="ReadMe" />
+	<GameFile Name="Redistributables" />
+	<GameFile Name="update" />
+	<GameFile Name="x64" />
+	<GameFile Name="bink2w64.dll" />
+	<GameFile Name="common.rpf" />
+	<GameFile Name="d3dcompiler_46.dll" />
+	<GameFile Name="d3dcsx_46.dll" />
+	<GameFile Name="GFSDK_ShadowLib.win64.dll" />
+	<GameFile Name="GFSDK_TXAA.win64.dll" />
+	<GameFile Name="GFSDK_TXAA_AlphaResolve.win64.dll" />
+	<GameFile Name="GPUPerfAPIDX11-x64.dll" />
+	<GameFile Name="GTA5.exe" />
+	<GameFile Name="GTAVLanguageSelect.exe" />
+	<GameFile Name="GTAVLauncher.exe" />
+	<GameFile Name="index.bin" />
+	<GameFile Name="NvPmApi.Core.win64.dll" />
+	<GameFile Name="PlayGTAV.exe" />
+	<GameFile Name="version.txt" />
+	<GameFile Name="x64a.rpf" />
+	<GameFile Name="x64b.rpf" />
+	<GameFile Name="x64c.rpf" />
+	<GameFile Name="x64d.rpf" />
+	<GameFile Name="x64e.rpf" />
+	<GameFile Name="x64f.rpf" />
+	<GameFile Name="x64g.rpf" />
+	<GameFile Name="x64h.rpf" />
+	<GameFile Name="x64i.rpf" />
+	<GameFile Name="x64j.rpf" />
+	<GameFile Name="x64k.rpf" />
+	<GameFile Name="x64l.rpf" />
+	<GameFile Name="x64m.rpf" />
+	<GameFile Name="x64n.rpf" />
+	<GameFile Name="x64o.rpf" />
+	<GameFile Name="x64p.rpf" />
+	<GameFile Name="x64q.rpf" />
+	<GameFile Name="x64r.rpf" />
+	<GameFile Name="x64s.rpf" />
+	<GameFile Name="x64t.rpf" />
+	<GameFile Name="x64u.rpf" />
+	<GameFile Name="x64v.rpf" />
+	<GameFile Name="x64w.rpf" />
+	
+	<GameFile Name="_commonredist" SteamOnly="true" />
+	<GameFile Name="installers" SteamOnly="true" />
+	<GameFile Name="installscript.vdf" SteamOnly="true" />
+	<GameFile Name="steam_api64.dll" SteamOnly="true" />
+	<GameFile Name="steam_appid.txt" SteamOnly="true" />
+</List>

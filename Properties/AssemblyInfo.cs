@@ -7,12 +7,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GTA V Modding Launcher")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("GTAVModdingLauncher")]
+[assembly: AssemblyDescription("An alternate Grand Theft Auto V Launcher")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Pursuit")]
 [assembly: AssemblyProduct("GTA V Modding Launcher")]
-[assembly: AssemblyCopyright("Copyright © 2019 Pursuit")]
+[assembly: AssemblyCopyright("Copyright © 2020 Pursuit")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
