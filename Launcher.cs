@@ -351,15 +351,15 @@ namespace GTAVModdingLauncher
 						List<string> dlcMods = GameScanner.ListDlcMods();
 
 						foreach(string dir in modDirs)
-							this.WorkManager.QueueJob(new MoveJob(dir, dir.Replace(this.Config.SelectedInstall.Path, path)));
+							this.WorkManager.QueueJob(new MoveJob(dir, Path.Combine(path, IOUtil.GetRelativePath(dir, this.Config.SelectedInstall.Path))));
 						foreach(string file in modFiles)
 						{
 							if(this.Config.DeleteLogs && file.EndsWith(".log"))
 								this.WorkManager.QueueJob(new DeleteJob(file));
-							else this.WorkManager.QueueJob(new MoveJob(file, file.Replace(this.Config.SelectedInstall.Path, path)));
+							else this.WorkManager.QueueJob(new MoveJob(file, Path.Combine(path, IOUtil.GetRelativePath(file, this.Config.SelectedInstall.Path))));
 						}
 						foreach(string mod in dlcMods)
-							this.WorkManager.QueueJob(new MoveJob(mod, mod.Replace(this.Config.SelectedInstall.Path, path)));
+							this.WorkManager.QueueJob(new MoveJob(mod, Path.Combine(path, IOUtil.GetRelativePath(mod, this.Config.SelectedInstall.Path))));
 
 						new PerformJobsDialog(this.WorkManager).Show();
 					}
@@ -494,15 +494,15 @@ namespace GTAVModdingLauncher
 						List<string> dlcMods = GameScanner.ListDlcMods();
 
 						foreach(string dir in modDirs)
-							this.WorkManager.QueueJob(new MoveJob(dir, dir.Replace(this.Config.SelectedInstall.Path, profilePath)));
+							this.WorkManager.QueueJob(new MoveJob(dir, Path.Combine(profilePath, IOUtil.GetRelativePath(dir, this.Config.SelectedInstall.Path))));
 						foreach(string file in modFiles)
 						{
 							if(this.Config.DeleteLogs && file.EndsWith(".log"))
 								this.WorkManager.QueueJob(new DeleteJob(file));
-							else this.WorkManager.QueueJob(new MoveJob(file, file.Replace(this.Config.SelectedInstall.Path, profilePath)));
+							else this.WorkManager.QueueJob(new MoveJob(file, Path.Combine(profilePath, IOUtil.GetRelativePath(file, this.Config.SelectedInstall.Path))));
 						}
 						foreach(string mod in dlcMods)
-							this.WorkManager.QueueJob(new MoveJob(mod, mod.Replace(this.Config.SelectedInstall.Path, profilePath)));
+							this.WorkManager.QueueJob(new MoveJob(mod, Path.Combine(profilePath, IOUtil.GetRelativePath(mod, this.Config.SelectedInstall.Path))));
 					}
 
 					if(!selected.IsVanilla)
@@ -623,59 +623,6 @@ namespace GTAVModdingLauncher
 		{
 			PopupCreate popup = new PopupCreate(this.Window);
 			popup.ShowDialog();
-		}
-
-		private void EditSelectedProfile(object sender, EventArgs e)
-		{
-			/*if(this.UiManager.SelectedProfile != 0)
-			{
-				PopupEdit popup = new PopupEdit(this.Window, this.UiManager.SelectedProfile, this.UiManager.Profiles[this.UiManager.SelectedProfile]);
-				popup.ShowDialog();
-			}
-			else LocalizedMessage.Show(this.Window, "CantEditProfile", "Impossible", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
-			*/
-		}
-
-		private void SwitchToSelectedProfile(object sender, RoutedEventArgs e)
-		{
-			/*this.UiManager.CanApplyChanges = false;
-			this.WorkManager.StartWork(() =>
-			{
-				this.UiManager.UIEnabled = false;
-				this.SwitchProfileTo(this.UiManager.SelectedProfile);
-				this.UiManager.UIEnabled = true;
-			});*/
-		}
-
-		private void DeleteSelectedProfile(object sender, EventArgs e)
-		{
-			/*if(this.UiManager.SelectedProfile == 0)
-				LocalizedMessage.Show(this.Window, "CantDeleteProfile", "Impossible", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
-			else
-			{
-				TaskDialogResult result = LocalizedMessage.Show(this.Window, "SureDelete", "Sure", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Yes | TaskDialogStandardButtons.Cancel);
-
-				if(result == TaskDialogResult.Yes)
-				{
-					string selected = this.UiManager.Profiles[this.UiManager.SelectedProfile];
-					int index = this.UiManager.SelectedProfile;
-					if(Directory.Exists(Path.Combine(this.Config.GetProfileFolder(),  selected)))
-						IOUtil.Delete(Path.Combine(this.Config.GetProfileFolder(), selected));
-					this.Profiles.Remove(selected);
-					this.UiManager.Profiles.Remove(selected);
-
-					if(index == this.Profiles.CurrentProfile)
-					{
-						new PerformJobDialog(this.WorkManager, new DeleteMods()).Show(this.WorkManager);
-						this.Profiles.CurrentProfile = 0;
-					}
-					else if(index < this.Profiles.CurrentProfile)
-						this.Profiles.CurrentProfile--;
-					this.UiManager.SelectedProfile = this.Profiles.CurrentProfile;
-					
-					this.Config.Save();
-				}
-			}*/
 		}
 
 		public void CloseLauncher()

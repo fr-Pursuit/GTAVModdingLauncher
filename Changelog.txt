@@ -1,3 +1,6 @@
+__0.6.1__
+* Mods could sometimes not be moved properly
+
 __0.6.0__
 * The launcher's code has been cleaned
 * Popups are now handled in a better way
