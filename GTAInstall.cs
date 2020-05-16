@@ -27,10 +27,12 @@ namespace GTAVModdingLauncher
 				string path = regKey.GetValue("InstallFolderSteam") as string;
 				regKey.Close();
 
-				if(path != null && Directory.Exists(path))
+				if(path != null)
 				{
 					path = path.Substring(0, path.Length - 4);
-					installs.Add(new GTAInstall(false, path, InstallType.Steam));
+
+					if(Directory.Exists(path))
+						installs.Add(new GTAInstall(false, path, InstallType.Steam));
 				}
 			}
 			else if(SteamHelper.IsAvailable)
