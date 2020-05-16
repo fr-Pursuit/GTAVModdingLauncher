@@ -1,4 +1,5 @@
-﻿using PursuitLib;
+﻿using System.IO;
+using PursuitLib;
 using PursuitLib.Windows.WPF;
 using PursuitLib.Windows.WPF.Modern;
 using System.Windows;
@@ -42,10 +43,13 @@ namespace GTAVModdingLauncher.Ui.Popup
 
 				if(selected?.Install != null)
 				{
-					Launcher.Instance.Config.SelectedInstall = selected.Install;
-					Launcher.Instance.Config.Save();
-					this.Close();
-					Launcher.Instance.UpdateGameInfo();
+					if(selected.Install.Path != null && Directory.Exists(selected.Install.Path))
+					{
+						Launcher.Instance.Config.SelectedInstall = selected.Install;
+						Launcher.Instance.Config.Save();
+						this.Close();
+						Launcher.Instance.UpdateGameInfo();
+					}
 				}
 				else
 				{

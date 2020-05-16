@@ -111,6 +111,9 @@ namespace GTAVModdingLauncher
 			Log.Info("Initializing launcher...");
 			SteamHelper.Initialize();
 
+			if(this.Config.SelectedInstall != null && (this.Config.SelectedInstall.Path == null || !Directory.Exists(this.Config.SelectedInstall.Path)))
+				this.Config.SelectedInstall = null;
+
 			if(this.Config.SelectedInstall == null)
 			{
 				GTAInstall[] installs = GTAInstall.FindInstalls();
