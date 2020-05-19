@@ -1,3 +1,6 @@
+__0.6.3__
+* Added support for the Epic Games version (as a Retail version)
+
 __0.6.2__
 * Fixed a crash that occured when the selected / detected installation was invalid
 

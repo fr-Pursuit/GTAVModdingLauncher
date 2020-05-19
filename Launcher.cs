@@ -562,11 +562,29 @@ namespace GTAVModdingLauncher
 						Log.Info("Starting steam game process...");
 						builder.FilePath = SteamHelper.ExecutablePath;
 						builder.AddArgument("-applaunch 271590");
+
+						if(!File.Exists(builder.FilePath))
+						{
+							Log.Error("Error: Steam.exe not found");
+							LocalizedMessage.Show(this.Window, "SteamNotFound", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+							this.UiManager.Working = false;
+							this.UiManager.UIEnabled = true;
+							return;
+						}
 					}
 					else
 					{
 						Log.Info("Starting game process...");
-						builder.FilePath = Path.Combine(this.Config.SelectedInstall.Path, "GTAVLauncher.exe");
+						builder.FilePath = Path.Combine(this.Config.SelectedInstall.Path, "PlayGTAV.exe");
+
+						if(!File.Exists(builder.FilePath))
+						{
+							Log.Error("Error: PlayGTAV.exe not found");
+							LocalizedMessage.Show(this.Window, "PlayGTANotFound", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+							this.UiManager.Working = false;
+							this.UiManager.UIEnabled = true;
+							return;
+						}
 					}
 
 					Log.Info("Setting game language to " + this.Config.GtaLanguage);
@@ -577,7 +595,7 @@ namespace GTAVModdingLauncher
 					else if(!profile.IsVanilla && this.Config.OfflineMode)
 						builder.AddArgument("-scOfflineOnly");
 
-					Log.Info("Executing "+builder);
+					Log.Info("Executing " + builder);
 					builder.StartProcess();
 
 					this.Window.Dispatcher.Invoke(() => this.Window.Visibility = Visibility.Hidden);
@@ -595,6 +613,7 @@ namespace GTAVModdingLauncher
 								if(DateTime.Now - process.StartTime > TimeSpan.FromMilliseconds(GameInitTime))
 								{
 									Log.Info("Closing Rockstar launcher");
+									ProcessUtil.Kill("PlayGTAV");
 									ProcessUtil.Kill("GTAVLauncher");
 									ProcessUtil.Kill("LauncherPatcher");
 									ProcessUtil.Kill("Launcher");
@@ -664,8 +683,8 @@ namespace GTAVModdingLauncher
 
 				if(this.Config != null)
 				{
-					report.Append("Install: " + this.Config.SelectedInstall);
-					report.Append("Current profile: " + this.Config.Profile);
+					report.Append("Install: " + this.Config.SelectedInstall + '\n');
+					report.Append("Current profile: " + this.Config.Profile + '\n');
 				}
 			}
 			catch(Exception)
