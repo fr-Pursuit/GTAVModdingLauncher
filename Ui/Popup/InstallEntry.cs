@@ -16,6 +16,8 @@ namespace GTAVModdingLauncher.Ui.Popup
 						return "/GTAVModdingLauncher;component/resources/steam.png";
 					else if(this.Install.Type == InstallType.Retail)
 						return "/GTAVModdingLauncher;component/resources/retail.png";
+					else if(this.Install.Type == InstallType.Epic)
+						return "/GTAVModdingLauncher;component/resources/epic.png";
 					else return "";
 				}
 				else return "/GTAVModdingLauncher;component/resources/new.png";

@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         ShowIconOnTitleBar="False"
-        Title="{p:I18n}" Width="300" Height="150">
+        Title="{p:I18n}" Width="400" Height="200">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition />
@@ -18,7 +18,7 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-			<StackPanel Orientation="Horizontal">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="3">
 				<Label Content="{p:I18n Path}" />
 				<TextBox Name="InstallPath" Width="200" Height="20" TextChanged="UpdateSaveButton" />
 				<Button ToolTip="{p:I18n Browse}" IsEnabled="{Binding ButtonsEnabled}" Click="Browse" Width="20" Height="20" Margin="6">
@@ -26,9 +26,10 @@
 				</Button>
 			</StackPanel>
 
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="3">
 				<RadioButton Name="SteamVersion" Content="{p:I18n Steam}" Margin="6" Click="UpdateSaveButton" />
 				<RadioButton Name="RetailVersion" Content="{p:I18n Retail}" Margin="6" Click="UpdateSaveButton" />
+				<RadioButton Name="EpicVersion" Content="{p:I18n Epic}" Margin="6" Click="UpdateSaveButton" />
 			</StackPanel>
 		</StackPanel>
 

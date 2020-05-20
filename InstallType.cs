@@ -3,6 +3,7 @@
 	public enum InstallType
 	{
 		Steam,
-		Retail
+		Retail,
+		Epic
 	}
 }

@@ -17,7 +17,6 @@ using PursuitLib.Work;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.OleDb;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -395,6 +394,8 @@ namespace GTAVModdingLauncher
 					return false;
 				}
 			}
+			else if(this.Config.SelectedInstall.Type == InstallType.Epic)
+				return true; //The game cannot *actually* be launched, but the user will be prompt to launch it manually
 			else return false;
 		}
 
@@ -427,6 +428,9 @@ namespace GTAVModdingLauncher
 				this.UiManager.GtaType = I18n.Localize("Label", "SteamVersion");
 			else if(this.Config.SelectedInstall.Type == InstallType.Retail)
 				this.UiManager.GtaType = I18n.Localize("Label", "RetailVersion");
+			else if(this.Config.SelectedInstall.Type == InstallType.Epic)
+				this.UiManager.GtaType = I18n.Localize("Label", "EpicVersion");
+			else this.UiManager.GtaType = "";
 
 			if(Directory.Exists(this.Config.SelectedInstall.Path))
 			{
@@ -552,7 +556,7 @@ namespace GTAVModdingLauncher
 					ProcessBuilder builder = new ProcessBuilder();
 					builder.WorkingDirectory = this.Config.SelectedInstall.Path;
 
-					if(this.Config.UseRph && File.Exists(Path.Combine(this.Config.SelectedInstall.Path, "RAGEPluginHook.exe")))
+					if(this.Config.UseRph && this.Config.SelectedInstall.Type != InstallType.Epic && File.Exists(Path.Combine(this.Config.SelectedInstall.Path, "RAGEPluginHook.exe")))
 					{
 						Log.Info("Starting RAGE Plugin Hook process...");
 						builder.FilePath = Path.Combine(this.Config.SelectedInstall.Path, "RAGEPluginHook.exe");
@@ -565,72 +569,81 @@ namespace GTAVModdingLauncher
 
 						if(!File.Exists(builder.FilePath))
 						{
+							builder.FilePath = null;
 							Log.Error("Error: Steam.exe not found");
 							LocalizedMessage.Show(this.Window, "SteamNotFound", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
-							this.UiManager.Working = false;
-							this.UiManager.UIEnabled = true;
-							return;
 						}
 					}
-					else
+					else if(this.Config.SelectedInstall.Type == InstallType.Retail)
 					{
 						Log.Info("Starting game process...");
 						builder.FilePath = Path.Combine(this.Config.SelectedInstall.Path, "PlayGTAV.exe");
 
 						if(!File.Exists(builder.FilePath))
 						{
+							builder.FilePath = null;
 							Log.Error("Error: PlayGTAV.exe not found");
 							LocalizedMessage.Show(this.Window, "PlayGTANotFound", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
-							this.UiManager.Working = false;
-							this.UiManager.UIEnabled = true;
-							return;
 						}
 					}
-
-					Log.Info("Setting game language to " + this.Config.GtaLanguage);
-					builder.AddArgument("-uilanguage " + this.Config.GtaLanguage);
-
-					if(online)
-						builder.AddArgument("-StraightIntoFreemode");
-					else if(!profile.IsVanilla && this.Config.OfflineMode)
-						builder.AddArgument("-scOfflineOnly");
-
-					Log.Info("Executing " + builder);
-					builder.StartProcess();
-
-					this.Window.Dispatcher.Invoke(() => this.Window.Visibility = Visibility.Hidden);
-					
-					if(this.Config.KillLauncher)
+					else if(this.Config.SelectedInstall.Type == InstallType.Epic)
 					{
-						Log.Info("Waiting for game to launch...");
-						long start = Environment.TickCount;
+						Log.Warn("The Epic Games version of the game cannot be launched automatically.");
+						LocalizedMessage.Show(this.Window, "LaunchEpic", "Info", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Ok);
+					}
 
-						while(true)
+					if(builder.FilePath != null)
+					{
+						Log.Info("Setting game language to " + this.Config.GtaLanguage);
+						builder.AddArgument("-uilanguage " + this.Config.GtaLanguage);
+
+						if(online)
+							builder.AddArgument("-StraightIntoFreemode");
+						else if(!profile.IsVanilla && this.Config.OfflineMode)
+							builder.AddArgument("-scOfflineOnly");
+
+						Log.Info("Executing " + builder);
+						builder.StartProcess();
+
+						this.Window.Dispatcher.Invoke(() => this.Window.Visibility = Visibility.Hidden);
+
+						if(this.Config.KillLauncher)
 						{
-							if(Process.GetProcessesByName("GTA5").Length > 0)
+							Log.Info("Waiting for game to launch...");
+							long start = Environment.TickCount;
+
+							while(true)
 							{
-								Process process = Process.GetProcessesByName("GTA5")[0];
-								if(DateTime.Now - process.StartTime > TimeSpan.FromMilliseconds(GameInitTime))
+								if(Process.GetProcessesByName("GTA5").Length > 0)
 								{
-									Log.Info("Closing Rockstar launcher");
-									ProcessUtil.Kill("PlayGTAV");
-									ProcessUtil.Kill("GTAVLauncher");
-									ProcessUtil.Kill("LauncherPatcher");
-									ProcessUtil.Kill("Launcher");
+									Process process = Process.GetProcessesByName("GTA5")[0];
+									if(DateTime.Now - process.StartTime > TimeSpan.FromMilliseconds(GameInitTime))
+									{
+										Log.Info("Closing Rockstar launcher");
+										ProcessUtil.Kill("PlayGTAV");
+										ProcessUtil.Kill("GTAVLauncher");
+										ProcessUtil.Kill("LauncherPatcher");
+										ProcessUtil.Kill("Launcher");
+										break;
+									}
+								}
+								else Thread.Sleep(GameCheckInterval);
+
+								if(Environment.TickCount - start > GameWaitTimeout)
+								{
+									Log.Warn("The game wasn't launched properly.");
 									break;
 								}
 							}
-							else Thread.Sleep(GameCheckInterval);
-
-							if(Environment.TickCount - start > GameWaitTimeout)
-							{
-								Log.Warn("The game wasn't launched properly.");
-								break;
-							}
 						}
-					}
 
-					this.CloseLauncher();
+						this.CloseLauncher();
+					}
+					else
+					{
+						this.UiManager.Working = false;
+						this.UiManager.UIEnabled = true;
+					}
 				}
 			}
 			else

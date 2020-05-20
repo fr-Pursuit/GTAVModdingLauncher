@@ -39,7 +39,7 @@ namespace GTAVModdingLauncher
 
 			foreach(string file in Directory.GetFileSystemEntries(install.Path))
 			{
-				if(gameManifest.FirstOrDefault(f => String.Equals(f.Name, Path.GetFileName(file), StringComparison.OrdinalIgnoreCase)) == null)
+				if(!IsVanillaEntry(Path.GetFileName(file)))
 					return true;
 			}
 
@@ -75,7 +75,7 @@ namespace GTAVModdingLauncher
 
 					foreach(string file in Directory.EnumerateFileSystemEntries(install.Path))
 					{
-						if(gameManifest.FirstOrDefault(f => String.Equals(f.Name, Path.GetFileName(file), StringComparison.OrdinalIgnoreCase)) == null)
+						if(!IsVanillaEntry(Path.GetFileName(file)))
 						{
 							if(File.Exists(file))
 								files.Add(file);
@@ -119,6 +119,11 @@ namespace GTAVModdingLauncher
 				throw new ApplicationException("GtaPath doesn't exist.");
 			}
 			else throw new ApplicationException("GtaPath is not set.");
+		}
+
+		private static bool IsVanillaEntry(string name)
+		{
+			return gameManifest.FirstOrDefault(f => (f.Type == null || f.Type.Value == Launcher.Instance.Config.SelectedInstall.Type) && String.Equals(f.Name, name, StringComparison.OrdinalIgnoreCase)) != null;
 		}
 	}
 }

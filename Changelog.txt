@@ -1,5 +1,8 @@
+__0.6.4__
+* Partial support for the Epic Games version of the game
+
 __0.6.3__
-* Added support for the Epic Games version (as a Retail version)
+* Failed attempt to support the Epic Games version
 
 __0.6.2__
 * Fixed a crash that occured when the selected / detected installation was invalid
