@@ -1,23 +1,17 @@
-﻿<pm:ModernWindow x:Class="GTAVModdingLauncher.Ui.Popup.PopupSettings"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:p="clr-namespace:PursuitLib.Windows.WPF;assembly=PursuitLib.Windows.WPF"
-        xmlns:pm="clr-namespace:PursuitLib.Windows.WPF.Modern;assembly=PursuitLib.Windows.WPF.Modern"
-        xmlns:m="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        mc:Ignorable="d"
-        WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
-        KeyDown="OnKeyDown"
-        ShowIconOnTitleBar="False"
-        Title="{p:I18n}" Width="360" Height="500">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6">
+﻿<pm:ModernFlyout x:Class="GTAVModdingLauncher.Ui.SettingsFlyout"
+				 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+				 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+				 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				 xmlns:m="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+				 xmlns:pm="clr-namespace:PursuitLib.Windows.WPF.Modern;assembly=PursuitLib.Windows.WPF.Modern"
+				 xmlns:p="clr-namespace:PursuitLib.Windows.WPF;assembly=PursuitLib.Windows.WPF"
+				 mc:Ignorable="d"
+        Theme="Accent"
+        Position="Left"
+        Header="{p:I18n}" Width="360">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+	    <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6">
             <StackPanel Orientation="Horizontal">
                 <Label Content="{p:I18n Language}" Width="150" VerticalAlignment="Center" />
                 <ComboBox Name="Languages" FontSize="11" Width="175" Height="20" Margin="6"/>
@@ -43,11 +37,5 @@
 
             <Button Content="{p:I18n CheckUpdates}" HorizontalAlignment="Left" Margin="3" Width="150" Height="30" Click="CheckForUpdates"/>
         </StackPanel>
-
-		<Border Grid.Row="1" Background="{DynamicResource GrayBrush9}" BorderBrush="{DynamicResource GrayBrush3}" BorderThickness="0 1 0 0"/>
-	    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Content="{p:I18n Save}" Margin="4" Width="100" Height="30" Click="Save"/>
-            <Button Content="{p:I18n Cancel}" Margin="4" Width="100" Height="30" Click="Cancel"/>
-        </StackPanel>
-    </Grid>
-</pm:ModernWindow>
+    </ScrollViewer>
+</pm:ModernFlyout>

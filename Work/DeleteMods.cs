@@ -1,5 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
-using PursuitLib;
+﻿using PursuitLib;
 using PursuitLib.IO;
 using PursuitLib.Windows.WPF.Dialogs;
 using PursuitLib.Work;
@@ -39,7 +38,7 @@ namespace GTAVModdingLauncher.Work
 			catch(IOException e)
 			{
 				Log.Error(e.ToString());
-				LocalizedMessage.Show(Launcher.Instance.Window, "ProfileSwitchError", "FatalError", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+				LocalizedMessage.Show(Launcher.Instance.Window, "ProfileSwitchError", "FatalError", DialogIcon.Error, DialogButtons.Ok);
 				Process.GetCurrentProcess().Kill();
 			}
 		}

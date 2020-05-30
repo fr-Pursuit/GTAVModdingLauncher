@@ -1,23 +1,23 @@
-﻿using System;
+﻿using PursuitLib.Windows.WPF.Dialogs;
+using PursuitLib.Windows.WPF.Modern.Dialogs.Base;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using PursuitLib.Windows.WPF;
-using PursuitLib.Windows.WPF.Dialogs;
-using PursuitLib.Windows.WPF.Modern;
 
-namespace GTAVModdingLauncher.Ui.Popup
+namespace GTAVModdingLauncher.Ui.Dialogs
 {
 	/// <summary>
-	/// The "Create new profile" popup
+	/// The "Create new profile" dialog
 	/// </summary>
-	public partial class PopupCreate : ModernWindow
+	public partial class CreateDialog : ModernDialogBase
 	{
-		public PopupCreate(Window parent)
+		public CreateDialog(Window parent)
 		{
+			this.Parent = (WPFWindow)parent;
 			this.InitializeComponent();
-			this.SetParent(parent);
+
 		}
 
 		private void Save(object sender, EventArgs e)
@@ -42,11 +42,11 @@ namespace GTAVModdingLauncher.Ui.Popup
 					Launcher.Instance.UiManager.AddProfile(profile);
 					this.Close();
 				}
-				else LocalizedMessage.Show(this, "ProfileSameName", "Error", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
+				else LocalizedMessage.Show(Launcher.Instance.Window, "ProfileSameName", "Error", DialogIcon.Warning, DialogButtons.Ok);
 			}
 			catch(Exception)
 			{
-				LocalizedMessage.Show(this, "InvalidName", "Error", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
+				LocalizedMessage.Show(Launcher.Instance.Window, "InvalidName", "Error", DialogIcon.Warning, DialogButtons.Ok);
 			}
 		}
 

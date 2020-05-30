@@ -1,20 +1,20 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using PursuitLib;
 using PursuitLib.Windows.WPF;
-using PursuitLib.Windows.WPF.Modern;
+using PursuitLib.Windows.WPF.Modern.Dialogs.Base;
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
-namespace GTAVModdingLauncher.Ui.Popup
+namespace GTAVModdingLauncher.Ui.Dialogs
 {
-	public partial class PopupCustomInstall : ModernWindow
+	public partial class CustomInstallDialog : ModernDialogBase
 	{
-		public PopupCustomInstall(Window parent)
+		public CustomInstallDialog(IWindow parent)
 		{
+			this.Parent = parent;
 			this.InitializeComponent();
-			this.SetParent(parent);
 		}
 
 		private void Save(object sender, EventArgs e)
@@ -40,7 +40,7 @@ namespace GTAVModdingLauncher.Ui.Popup
 			CommonOpenFileDialog dialog = new CommonOpenFileDialog(I18n.Localize("Dialog.Caption", "ChooseFolder"));
 			dialog.IsFolderPicker = true;
 
-			if(dialog.ShowDialog(this) == CommonFileDialogResult.Ok)
+			if(dialog.ShowDialog(this.Window) == CommonFileDialogResult.Ok)
 				this.InstallPath.Text = dialog.FileName;
 		}
 

@@ -28,7 +28,7 @@ namespace GTAVModdingLauncher
 			else
 			{
 				Log.Error("Fatal error: Unable to find game manifest");
-				LocalizedMessage.Show("ManifestNotFound", "FatalError", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+				LocalizedMessage.Show("ManifestNotFound", "FatalError", DialogIcon.Error, DialogButtons.Ok);
 				Environment.Exit(1);
 			}
 		}

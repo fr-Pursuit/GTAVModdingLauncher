@@ -1,24 +1,20 @@
-﻿using System.IO;
-using PursuitLib;
-using PursuitLib.Windows.WPF;
-using PursuitLib.Windows.WPF.Modern;
+﻿using PursuitLib;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace GTAVModdingLauncher.Ui.Popup
+namespace GTAVModdingLauncher.Ui.Dialogs
 {
-	public partial class PopupChooseInstall : ModernWindow
+	public partial class ChooseInstallDialog : UserControl
 	{
-		public PopupChooseInstall() : this(null) {}
+		private readonly IHost host;
 
-		public PopupChooseInstall(Window parent)
+
+		public ChooseInstallDialog(IHost host)
 		{
+			this.host = host;
 			this.InitializeComponent();
-
-			if(parent != null)
-				this.SetParent(parent);
-
 			this.RefreshList();
 		}
 
@@ -47,13 +43,13 @@ namespace GTAVModdingLauncher.Ui.Popup
 					{
 						Launcher.Instance.Config.SelectedInstall = selected.Install;
 						Launcher.Instance.Config.Save();
-						this.Close();
+						this.host.Close();
 						Launcher.Instance.UpdateGameInfo();
 					}
 				}
 				else
 				{
-					new PopupCustomInstall(this).ShowDialog();
+					new CustomInstallDialog(this.host.Window).Show();
 					this.RefreshList();
 				}
 			}

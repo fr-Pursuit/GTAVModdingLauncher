@@ -1,29 +1,26 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
-using PursuitLib.Windows.WPF;
+﻿using PursuitLib.Windows.WPF;
 using PursuitLib.Windows.WPF.Dialogs;
-using PursuitLib.Windows.WPF.Modern;
+using PursuitLib.Windows.WPF.Modern.Dialogs.Base;
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
-namespace GTAVModdingLauncher.Ui.Popup
+namespace GTAVModdingLauncher.Ui.Dialogs
 {
 	/// <summary>
-	/// The "Edit profile" popup
+	/// The "Edit profile" dialog
 	/// </summary>
-	public partial class PopupEdit : ModernWindow
+	public partial class EditDialog : ModernDialogBase
 	{
 		private ProfileEntry profile;
 
-		public PopupEdit(Window parent, ProfileEntry profile)
+		public EditDialog(Window parent, ProfileEntry profile)
 		{
+			this.Parent = (WPFWindow)parent;
 			this.profile = profile;
 
 			InitializeComponent();
 			this.ProfileName.Text = profile.ProfileName;
-
-			this.SetParent(parent);
 		}
 
 		private void Save(object sender, EventArgs e)
@@ -44,11 +41,11 @@ namespace GTAVModdingLauncher.Ui.Popup
 					launcher.Config.Save();
 					this.Close();
 				}
-				else LocalizedMessage.Show(this, "ProfileSameName", "Error", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
+				else LocalizedMessage.Show(Launcher.Instance.Window, "ProfileSameName", "Error", DialogIcon.Warning, DialogButtons.Ok);
 			}
 			catch(Exception)
 			{
-				LocalizedMessage.Show(this, "InvalidName", "Error", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Ok);
+				LocalizedMessage.Show(Launcher.Instance.Window, "InvalidName", "Error", DialogIcon.Warning, DialogButtons.Ok);
 			}
 		}
 

@@ -1,6 +1,6 @@
 ﻿using PursuitLib;
 
-namespace GTAVModdingLauncher.Ui.Popup
+namespace GTAVModdingLauncher.Ui.Dialogs
 {
 	public class InstallEntry
 	{

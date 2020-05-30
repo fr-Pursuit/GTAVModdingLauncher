@@ -1,8 +1,7 @@
 ﻿using GTAVModdingLauncher.Legacy;
 using GTAVModdingLauncher.Ui;
-using GTAVModdingLauncher.Ui.Popup;
+using GTAVModdingLauncher.Ui.Dialogs;
 using GTAVModdingLauncher.Work;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PursuitLib;
@@ -82,8 +81,8 @@ namespace GTAVModdingLauncher
 			this.Window.Closing += OnWindowClosing;
 			this.Window.Closed += OnWindowClosed;
 			this.Window.AboutButton.Click += ShowAboutPopup;
-			this.Window.SettingsButton.Click += OpenSettingsPopup;
-			this.Window.CreateButton.Click += CreateNewProfile;
+			this.Window.SettingsButton.Click += (s, a) => this.Window.Settings.Open();
+			this.Window.CreateButton.Click += (s, a) => new CreateDialog(this.Window).Show();
 			this.UiManager = new UIManager(this.Window);
 			this.UiManager.WindowTitle = this.DisplayName;
 			this.WorkManager.ProgressDisplay = new MultiProgressDisplay((WPFProgressBar)this.Window.Progress, new TaskBarProgress());
@@ -121,8 +120,10 @@ namespace GTAVModdingLauncher
 					this.Config.SelectedInstall = installs[0];
 				else
 				{
-					LocalizedMessage.Show("GTANotFound", "Info", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Ok);
-					new PopupChooseInstall().ShowDialog();
+					LocalizedMessage.Show("GTANotFound", "Info", DialogIcon.Information, DialogButtons.Ok);
+					HostWindow host = new HostWindow();
+					host.Content = new ChooseInstallDialog(host);
+					host.ShowDialog();
 
 					if(this.Config.SelectedInstall == null)
 					{
@@ -139,7 +140,7 @@ namespace GTAVModdingLauncher
 
 			if(Path.GetFullPath(this.WorkingDirectory).Equals(Path.GetFullPath(this.Config.SelectedInstall.Path)))
 			{
-				LocalizedMessage.Show("InstalledInGTA", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+				LocalizedMessage.Show("InstalledInGTA", "Error", DialogIcon.Error, DialogButtons.Ok);
 				Environment.Exit(1);
 			}
 
@@ -238,7 +239,7 @@ namespace GTAVModdingLauncher
 		{
 			if(this.Window.CheckAccess())
 			{
-				if(MessageDialog.Show(window, I18n.Localize("Dialog", "Update", obj["name"], obj["body"]), I18n.Localize("Dialog.Caption", "Update"), TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Yes | TaskDialogStandardButtons.No) == TaskDialogResult.Yes)
+				if(MessageDialog.Show(window, I18n.Localize("Dialog", "Update", obj["name"], obj["body"].ToString().Replace("\\", "")), I18n.Localize("Dialog.Caption", "Update"), DialogIcon.Information, DialogButtons.Yes | DialogButtons.No) == DialogStandardResult.Yes)
 				{
 					Process.Start(obj["assets"][0]["browser_download_url"].ToString());
 					this.CloseLauncher();
@@ -318,9 +319,9 @@ namespace GTAVModdingLauncher
 			{
 				Log.Warn("GTA V is modded, but the vanilla profile is selected !");
 
-				TaskDialogResult result = LocalizedMessage.Show(this.Window, "ModsOnVanilla", "Warn", TaskDialogStandardIcon.Warning, TaskDialogStandardButtons.Yes | TaskDialogStandardButtons.No | TaskDialogStandardButtons.Cancel);
+				DialogStandardResult result = LocalizedMessage.Show(this.Window, "ModsOnVanilla", "Warn", DialogIcon.Warning, DialogButtons.Yes | DialogButtons.No | DialogButtons.Cancel);
 
-				if(result == TaskDialogResult.Yes)
+				if(result == DialogStandardResult.Yes)
 				{
 					string name = this.GetNewProfileName();
 
@@ -332,7 +333,7 @@ namespace GTAVModdingLauncher
 					this.UiManager.UpdateActiveProfile();
 					return true;
 				}
-				else if(result == TaskDialogResult.No)
+				else if(result == DialogStandardResult.No)
 				{
 					new PerformJobDialog(this.WorkManager, new DeleteMods()).Show(this.WorkManager);
 					return true;
@@ -345,9 +346,9 @@ namespace GTAVModdingLauncher
 
 				if(Directory.GetFileSystemEntries(path).GetLength(0) != 0)
 				{
-					TaskDialogResult result = LocalizedMessage.Show(this.Window, "UpdateProfile", "UpdateProfile", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Yes | TaskDialogStandardButtons.No);
+					DialogStandardResult result = LocalizedMessage.Show(this.Window, "UpdateProfile", "UpdateProfile", DialogIcon.Information, DialogButtons.Yes | DialogButtons.No);
 
-					if(result == TaskDialogResult.Yes)
+					if(result == DialogStandardResult.Yes)
 					{
 						GameScanner.ListRootMods(out List<string> modFiles, out List<string> modDirs);
 						List<string> dlcMods = GameScanner.ListDlcMods();
@@ -380,7 +381,7 @@ namespace GTAVModdingLauncher
 					return true;
 				else
 				{
-					LocalizedMessage.Show(this.Window, "NoExecutable", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+					LocalizedMessage.Show(this.Window, "NoExecutable", "Error", DialogIcon.Error, DialogButtons.Ok);
 					return false;
 				}
 			}
@@ -390,12 +391,12 @@ namespace GTAVModdingLauncher
 					return true;
 				else
 				{
-					LocalizedMessage.Show(this.Window, "NoSteam", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+					LocalizedMessage.Show(this.Window, "NoSteam", "Error", DialogIcon.Error, DialogButtons.Ok);
 					return false;
 				}
 			}
 			else if(this.Config.SelectedInstall.Type == InstallType.Epic)
-				return true; //The game cannot *actually* be launched, but the user will be prompt to launch it manually
+				return true;
 			else return false;
 		}
 
@@ -463,7 +464,7 @@ namespace GTAVModdingLauncher
 					{
 						Log.Info("Asking for elevated privileges...");
 
-						if(LocalizedCMessage.Show(this.Window, "LauncherNeedsPerms", "Info", TaskDialogStandardIcon.Shield, new DialogButton("Ok", true), "Cancel") == "Ok")
+						if(LocalizedCMessage.Show(this.Window, "LauncherNeedsPerms", "Info", DialogIcon.Shield, new DialogButton("Ok", true), "Cancel") == "Ok")
 						{
 							ProcessBuilder builder = new ProcessBuilder(Assembly.GetEntryAssembly().Location);
 							builder.LaunchAsAdmin = true;
@@ -474,7 +475,12 @@ namespace GTAVModdingLauncher
 					}
 				}
 			}
-			else new PopupChooseInstall(this.Window).ShowDialog();
+			else
+			{
+				HostDialog host = new HostDialog(this.Window);
+				host.Content = new ChooseInstallDialog(host);
+				host.Show();
+			}
 		}
 
 		/// <summary>
@@ -529,7 +535,7 @@ namespace GTAVModdingLauncher
 				catch(IOException e)
 				{
 					Log.Error(e.ToString());
-					LocalizedMessage.Show(this.Window, "ProfileSwitchError", "FatalError", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+					LocalizedMessage.Show(this.Window, "ProfileSwitchError", "FatalError", DialogIcon.Error, DialogButtons.Ok);
 					Process.GetCurrentProcess().Kill();
 				}
 
@@ -547,7 +553,7 @@ namespace GTAVModdingLauncher
 			{
 				if(online && !profile.IsVanilla)
 				{
-					LocalizedMessage.Show(this.Window, "CantPlayOnline", "Impossible", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+					LocalizedMessage.Show(this.Window, "CantPlayOnline", "Impossible", DialogIcon.Error, DialogButtons.Ok);
 					this.UiManager.Working = false;
 					this.UiManager.UIEnabled = true;
 				}
@@ -571,25 +577,26 @@ namespace GTAVModdingLauncher
 						{
 							builder.FilePath = null;
 							Log.Error("Error: Steam.exe not found");
-							LocalizedMessage.Show(this.Window, "SteamNotFound", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+							LocalizedMessage.Show(this.Window, "SteamNotFound", "Error", DialogIcon.Error, DialogButtons.Ok);
 						}
 					}
 					else if(this.Config.SelectedInstall.Type == InstallType.Retail)
 					{
-						Log.Info("Starting game process...");
+						Log.Info("Starting retail game process...");
 						builder.FilePath = Path.Combine(this.Config.SelectedInstall.Path, "PlayGTAV.exe");
 
 						if(!File.Exists(builder.FilePath))
 						{
 							builder.FilePath = null;
 							Log.Error("Error: PlayGTAV.exe not found");
-							LocalizedMessage.Show(this.Window, "PlayGTANotFound", "Error", TaskDialogStandardIcon.Error, TaskDialogStandardButtons.Ok);
+							LocalizedMessage.Show(this.Window, "PlayGTANotFound", "Error", DialogIcon.Error, DialogButtons.Ok);
 						}
 					}
 					else if(this.Config.SelectedInstall.Type == InstallType.Epic)
 					{
-						Log.Warn("The Epic Games version of the game cannot be launched automatically.");
-						LocalizedMessage.Show(this.Window, "LaunchEpic", "Info", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Ok);
+						Log.Info("Starting epic game process...");
+						builder.FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+						builder.AddArgument("com.epicgames.launcher://apps/9d2d0eb64d5c44529cece33fe2a46482?action=launch&silent=true");
 					}
 
 					if(builder.FilePath != null)
@@ -654,12 +661,6 @@ namespace GTAVModdingLauncher
 			}
 		}
 
-		private void CreateNewProfile(object sender, EventArgs e)
-		{
-			PopupCreate popup = new PopupCreate(this.Window);
-			popup.ShowDialog();
-		}
-
 		public void CloseLauncher()
 		{
 			this.closeRequested = true;
@@ -671,13 +672,7 @@ namespace GTAVModdingLauncher
 
 		private void ShowAboutPopup(object sender, EventArgs e)
 		{
-			MessageDialog.Show(this.Window, I18n.Localize("Dialog", "About", this.Version), I18n.Localize("Dialog.Caption", "About"), TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Ok);
-		}
-
-		private void OpenSettingsPopup(object sender, EventArgs e)
-		{
-			PopupSettings popup = new PopupSettings(this.Window);
-			popup.ShowDialog();
+			MessageDialog.Show(this.Window, I18n.Localize("Dialog", "About", this.Version), I18n.Localize("Dialog.Caption", "About"), DialogIcon.Information, DialogButtons.Ok);
 		}
 
 		private void OnI18nReload(string newLanguage)
@@ -728,7 +723,7 @@ namespace GTAVModdingLauncher
 			if(!this.closeRequested && this.WorkManager.IsWorking)
 			{
 				e.Cancel = true;
-				LocalizedMessage.Show(this.Window, "LauncherWorking", "Impossible", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Ok);
+				LocalizedMessage.Show(this.Window, "LauncherWorking", "Impossible", DialogIcon.Information, DialogButtons.Ok);
 			}
 		}
 

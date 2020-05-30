@@ -24,6 +24,6 @@
 			</StackPanel>
 		</m:Tile>
 
-		<pm:MoveButton Name="MoveButton" Grid.Column="1" Width="16" Height="16" Brush="{DynamicResource GrayBrush1}" />
+		<pm:Grabber Name="MoveButton" Grid.Column="1" Width="16" Height="16" Foreground="{DynamicResource GrayBrush1}" />
 	</Grid>
 </UserControl>

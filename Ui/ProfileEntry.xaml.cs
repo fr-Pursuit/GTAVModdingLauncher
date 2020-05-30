@@ -1,15 +1,14 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using GTAVModdingLauncher.Ui.Popup;
+﻿using GTAVModdingLauncher.Ui.Dialogs;
 using GTAVModdingLauncher.Work;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using PursuitLib;
 using PursuitLib.Extensions;
 using PursuitLib.IO;
 using PursuitLib.Windows.WPF.Dialogs;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace GTAVModdingLauncher.Ui
 {
@@ -64,7 +63,7 @@ namespace GTAVModdingLauncher.Ui
 			this.ContextMenu.Items.Add(this.setActive);
 
 			this.edit = new MenuItem();
-			this.edit.Click += Edit;
+			this.edit.Click += (s, a) => new EditDialog(Launcher.Instance.Window, this).Show();
 			this.ContextMenu.Items.Add(this.edit);
 
 			this.openFolder = new MenuItem();
@@ -124,12 +123,6 @@ namespace GTAVModdingLauncher.Ui
 			});
 		}
 
-		private void Edit(object sender, EventArgs e)
-		{
-			PopupEdit popup = new PopupEdit(Launcher.Instance.Window, this);
-			popup.ShowDialog();
-		}
-
 		private void OpenFolder(object sender, RoutedEventArgs e)
 		{
 			if(Launcher.Instance.Config.Profile == this.profile)
@@ -149,9 +142,9 @@ namespace GTAVModdingLauncher.Ui
 		{
 			if(!this.profile.IsVanilla)
 			{
-				TaskDialogResult result = LocalizedMessage.Show(Launcher.Instance.Window, "SureDelete", "Sure", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Yes | TaskDialogStandardButtons.Cancel);
+				DialogStandardResult result = LocalizedMessage.Show(Launcher.Instance.Window, "SureDelete", "Sure", DialogIcon.Information, DialogButtons.Yes | DialogButtons.Cancel);
 
-				if(result == TaskDialogResult.Yes)
+				if(result == DialogStandardResult.Yes)
 				{
 					if(Directory.Exists(Path.Combine(Launcher.Instance.UserDirectory, "Profiles", this.profile.Name)))
 						IOUtil.Delete(Path.Combine(Launcher.Instance.UserDirectory, "Profiles", this.profile.Name));

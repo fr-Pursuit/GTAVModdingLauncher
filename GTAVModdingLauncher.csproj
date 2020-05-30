@@ -116,27 +116,34 @@
     <Compile Include="Legacy\LegacyBinder.cs" />
     <Compile Include="Legacy\UserSettings.cs" />
     <Compile Include="Profile.cs" />
+    <Compile Include="Ui\Dialogs\HostDialog.xaml.cs">
+      <DependentUpon>HostDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\HostWindow.xaml.cs">
+      <DependentUpon>HostWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\IHost.cs" />
     <Compile Include="Ui\NewsBox.xaml.cs">
       <DependentUpon>NewsBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ui\NewsEntry.xaml.cs">
       <DependentUpon>NewsEntry.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ui\Popup\InstallEntry.cs" />
-    <Compile Include="Ui\Popup\PopupChooseInstall.xaml.cs">
-      <DependentUpon>PopupChooseInstall.xaml</DependentUpon>
+    <Compile Include="Ui\Dialogs\InstallEntry.cs" />
+    <Compile Include="Ui\Dialogs\ChooseInstallDialog.xaml.cs">
+      <DependentUpon>ChooseInstallDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ui\Popup\PopupCustomInstall.xaml.cs">
-      <DependentUpon>PopupCustomInstall.xaml</DependentUpon>
+    <Compile Include="Ui\Dialogs\CustomInstallDialog.xaml.cs">
+      <DependentUpon>CustomInstallDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ui\Popup\PopupCreate.xaml.cs">
-      <DependentUpon>PopupCreate.xaml</DependentUpon>
+    <Compile Include="Ui\Dialogs\CreateDialog.xaml.cs">
+      <DependentUpon>CreateDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ui\Popup\PopupEdit.xaml.cs">
-      <DependentUpon>PopupEdit.xaml</DependentUpon>
+    <Compile Include="Ui\Dialogs\EditDialog.xaml.cs">
+      <DependentUpon>EditDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ui\Popup\PopupSettings.xaml.cs">
-      <DependentUpon>PopupSettings.xaml</DependentUpon>
+    <Compile Include="Ui\SettingsFlyout.xaml.cs">
+      <DependentUpon>SettingsFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="SteamHelper.cs" />
     <Compile Include="Ui\ProfileEntry.xaml.cs">
@@ -145,6 +152,14 @@
     <Compile Include="Ui\UIManager.cs" />
     <Compile Include="UserConfig.cs" />
     <Compile Include="Work\DeleteMods.cs" />
+    <Page Include="Ui\Dialogs\HostDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\HostWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Ui\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -166,23 +181,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Ui\Popup\PopupChooseInstall.xaml">
+    <Page Include="Ui\Dialogs\ChooseInstallDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Ui\Popup\PopupCustomInstall.xaml">
+    <Page Include="Ui\Dialogs\CustomInstallDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Ui\Popup\PopupCreate.xaml">
+    <Page Include="Ui\Dialogs\CreateDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Ui\Popup\PopupEdit.xaml">
+    <Page Include="Ui\Dialogs\EditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Ui\Popup\PopupSettings.xaml">
+    <Page Include="Ui\SettingsFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -239,9 +254,6 @@
     <EmbeddedResource Include="libraries\Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\folder.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="libraries\Microsoft.WindowsAPICodePack.dll" />
     <EmbeddedResource Include="libraries\Microsoft.WindowsAPICodePack.Shell.dll" />
   </ItemGroup>
@@ -270,6 +282,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resources\epic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ui\Popup\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.BoxIcons.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.Material.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

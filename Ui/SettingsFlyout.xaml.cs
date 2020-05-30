@@ -1,25 +1,23 @@
-﻿using System;
-using System.IO;
-using System.Windows;
-using System.Windows.Input;
-using PursuitLib;
-using PursuitLib.Windows.WPF;
-using PursuitLib.Extensions;
-using System.Globalization;
-using System.Collections.Generic;
-using System.Threading;
-using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using GTAVModdingLauncher.Ui.Dialogs;
 using Newtonsoft.Json.Linq;
-using PursuitLib.Windows;
+using PursuitLib;
+using PursuitLib.Extensions;
 using PursuitLib.Windows.WPF.Dialogs;
 using PursuitLib.Windows.WPF.Modern;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading;
+using System.Windows;
+using PTheme = PursuitLib.Windows.Theme;
 
-namespace GTAVModdingLauncher.Ui.Popup
+namespace GTAVModdingLauncher.Ui
 {
 	/// <summary>
-	/// The "Settings" popup
+	/// The "Settings" flyout
 	/// </summary>
-	public partial class PopupSettings : ModernWindow
+	public partial class SettingsFlyout : ModernFlyout
 	{
 		private static Dictionary<string, string> supportedGtaLanguages = null;
 
@@ -27,12 +25,20 @@ namespace GTAVModdingLauncher.Ui.Popup
 		private string OldLanguage;
 		private Thread verifyUpdatesThread;
 
-		public PopupSettings(Window parent)
+		public SettingsFlyout()
 		{
-			this.OldLanguage = Launcher.Instance.Config.Language;
-			InitializeComponent();
-			this.SetParent(parent);
+			this.InitializeComponent();
 
+			this.OnClosed += SaveConfig;
+		}
+
+		protected override void Initialize()
+		{
+			base.Initialize();
+
+			this.OldLanguage = Launcher.Instance.Config.Language;
+
+			this.Languages.Items.Clear();
 			for(int i = 0; i < I18n.SupportedLanguages.Count; i++)
 			{
 				string language = I18n.SupportedLanguages[i];
@@ -41,6 +47,7 @@ namespace GTAVModdingLauncher.Ui.Popup
 					this.Languages.SelectedIndex = i;
 			}
 
+			this.GtaLanguages.Items.Clear();
 			string currentGtaLanguage = Launcher.Instance.Config.GetGtaLanguage();
 			int index = 0;
 			foreach(string language in this.GetSupportedGtaLanguages().Keys)
@@ -62,7 +69,7 @@ namespace GTAVModdingLauncher.Ui.Popup
 			this.CheckUpdates.IsChecked = Launcher.Instance.Config.CheckUpdates;
 			this.DisplayNews.IsChecked = Launcher.Instance.Config.DisplayNews;
 			this.UseLogFile.IsChecked = Launcher.Instance.Config.UseLogFile;
-			this.DarkMode.IsChecked = Launcher.Instance.Config.Theme == Theme.Dark;
+			this.DarkMode.IsChecked = Launcher.Instance.Config.Theme == PTheme.Dark;
 			this.SelectedVersion.Text = Launcher.Instance.Config.SelectedInstall?.Path;
 		}
 
@@ -89,7 +96,7 @@ namespace GTAVModdingLauncher.Ui.Popup
 			}
 		}
 
-		private void Save(object sender, EventArgs e)
+		private void SaveConfig()
 		{
 			Launcher.Instance.Config.KillLauncher = this.KillLauncher.IsChecked.Value;
 			Launcher.Instance.Config.UseRph = this.UseRph.IsChecked.Value;
@@ -125,19 +132,6 @@ namespace GTAVModdingLauncher.Ui.Popup
 
 			if(Launcher.Instance.Config.Language != this.OldLanguage)
 				I18n.LoadLanguage(Launcher.Instance.Config.Language);
-
-			this.Close();
-		}
-
-		private void Cancel(object sender, EventArgs e)
-		{
-			this.Close();
-		}
-
-		private void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if(e.Key == Key.Return)
-				this.Save(null, null);
 		}
 
 		private void CheckForUpdates(object sender, RoutedEventArgs e)
@@ -154,24 +148,26 @@ namespace GTAVModdingLauncher.Ui.Popup
 			JObject obj = Launcher.Instance.IsUpToDate();
 
 			if(obj != null)
-				Launcher.Instance.ShowUpdatePopup(this, obj);
+				Launcher.Instance.ShowUpdatePopup(Launcher.Instance.Window, obj);
 			else this.Dispatcher.Invoke(new Callback(ShowUpToDatePopup));
 		}
 
 		private void ShowUpToDatePopup()
 		{
-			LocalizedMessage.Show(this, "UpToDate", "Info", TaskDialogStandardIcon.Information, TaskDialogStandardButtons.Ok);
+			LocalizedMessage.Show(Launcher.Instance.Window, "UpToDate", "Info", DialogIcon.Information, DialogButtons.Ok);
 		}
 
 		private void ManageInstalls(object sender, RoutedEventArgs e)
 		{
-			new PopupChooseInstall(this).ShowDialog();
+			HostDialog host = new HostDialog(Launcher.Instance.Window);
+			host.Content = new ChooseInstallDialog(host);
+			host.Show();
 			this.SelectedVersion.Text = Launcher.Instance.Config.SelectedInstall?.Path;
 		}
 
 		private void UpdateTheme(object sender, EventArgs e)
 		{
-			Launcher.Instance.Config.Theme = this.DarkMode.IsChecked.Value ? Theme.Dark : Theme.Light;
+			Launcher.Instance.Config.Theme = this.DarkMode.IsChecked.Value ? PTheme.Dark : PTheme.Light;
 			Launcher.Instance.Theme = Launcher.Instance.Config.Theme;
 		}
 	}
