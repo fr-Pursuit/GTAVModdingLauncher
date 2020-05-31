@@ -10,7 +10,6 @@ namespace GTAVModdingLauncher.Ui.Dialogs
 	{
 		private readonly IHost host;
 
-
 		public ChooseInstallDialog(IHost host)
 		{
 			this.host = host;

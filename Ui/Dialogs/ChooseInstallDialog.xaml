@@ -24,7 +24,7 @@
 					<GridViewColumn Width="90">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<Image Width="64" Height="64" Margin="6" Source="{Binding Icon}"/>
+								<Image Width="64" Height="64" Margin="6" Source="{Binding Icon}" RenderOptions.BitmapScalingMode="HighQuality" />
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>

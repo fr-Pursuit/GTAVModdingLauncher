@@ -283,9 +283,7 @@
   <ItemGroup>
     <Resource Include="resources\epic.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Ui\Popup\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.BoxIcons.dll" />
   </ItemGroup>
