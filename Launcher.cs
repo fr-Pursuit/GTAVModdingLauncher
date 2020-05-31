@@ -561,6 +561,7 @@ namespace GTAVModdingLauncher
 				{
 					ProcessBuilder builder = new ProcessBuilder();
 					builder.WorkingDirectory = this.Config.SelectedInstall.Path;
+					bool argsSupported = true;
 
 					if(this.Config.UseRph && this.Config.SelectedInstall.Type != InstallType.Epic && File.Exists(Path.Combine(this.Config.SelectedInstall.Path, "RAGEPluginHook.exe")))
 					{
@@ -597,17 +598,21 @@ namespace GTAVModdingLauncher
 						Log.Info("Starting epic game process...");
 						builder.FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
 						builder.AddArgument("com.epicgames.launcher://apps/9d2d0eb64d5c44529cece33fe2a46482?action=launch&silent=true");
+						argsSupported = false;
 					}
 
 					if(builder.FilePath != null)
 					{
-						Log.Info("Setting game language to " + this.Config.GtaLanguage);
-						builder.AddArgument("-uilanguage " + this.Config.GtaLanguage);
+						if(argsSupported)
+						{
+							Log.Info("Setting game language to " + this.Config.GtaLanguage);
+							builder.AddArgument("-uilanguage " + this.Config.GtaLanguage);
 
-						if(online)
-							builder.AddArgument("-StraightIntoFreemode");
-						else if(!profile.IsVanilla && this.Config.OfflineMode)
-							builder.AddArgument("-scOfflineOnly");
+							if(online)
+								builder.AddArgument("-StraightIntoFreemode");
+							else if(!profile.IsVanilla && this.Config.OfflineMode)
+								builder.AddArgument("-scOfflineOnly");
+						}
 
 						Log.Info("Executing " + builder);
 						builder.StartProcess();
