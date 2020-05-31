@@ -1,3 +1,6 @@
+__0.6.6__
+* The launcher now properly launches the EGS version of the game (Thanks to mips!)
+
 __0.6.5__
 * All dialogs now use the modern theme
 * The launcher should now be able to launch the Epic Games version of the game
