@@ -1,3 +1,6 @@
+__0.6.7__
+* Fixed a crash that could occur when the launcher tried to display a modern popup while the main window wasn't visible
+
 __0.6.6__
 * The launcher now properly launches the EGS version of the game (Thanks to mips!)
 
