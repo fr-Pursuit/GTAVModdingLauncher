@@ -410,10 +410,10 @@ namespace GTAVModdingLauncher
 
 			if(this.Config.ProfileExists(baseName))
 			{
-				int i = 0;
-				while(this.Config.ProfileExists(baseName + i))
+				int i = 1;
+				while(this.Config.ProfileExists(baseName + ' ' + i))
 					i++;
-				return baseName + i;
+				return baseName + ' ' + i;
 			}
 			else return baseName;
 		}

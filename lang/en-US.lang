@@ -15,7 +15,7 @@ Button.ToolTip.Settings=Settings
 Button.ToolTip.Browse=Browse
 
 ContextMenu.Play=Play
-ContextMenu.SetActive=Set profile as acitve
+ContextMenu.SetActive=Set profile as active
 ContextMenu.EditProfile=Edit profile
 ContextMenu.OpenProfileFolder=Open profile folder
 ContextMenu.DeleteProfile=Delete profile
