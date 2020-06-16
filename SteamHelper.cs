@@ -12,13 +12,8 @@ namespace GTAVModdingLauncher
 		public static void Initialize()
 		{
 			RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Valve\\Steam", false);
-
-			if(regKey != null)
-			{
-				ExecutablePath = Path.Combine((string) regKey.GetValue("InstallPath"), "steam.exe");
-				regKey.Close();
-			}
-			else ExecutablePath = null;
+			ExecutablePath = regKey?.GetValue("InstallPath") is string installPath ? Path.Combine(installPath, "steam.exe") : null;
+			regKey?.Close();
 		}
 	}
 }
