@@ -107,9 +107,8 @@ namespace GTAVModdingLauncher.Ui
 
 			Launcher.Instance.WorkManager.StartWork(() =>
 			{
-				if(Launcher.Instance.Config.Profile != this.profile)
-					Launcher.Instance.SwitchProfileTo(this.profile);
-				Launcher.Instance.LaunchGame(false);
+				if(Launcher.Instance.Config.Profile == this.profile || Launcher.Instance.SwitchProfileTo(this.profile))
+					Launcher.Instance.LaunchGame(false);
 			});
 		}
 

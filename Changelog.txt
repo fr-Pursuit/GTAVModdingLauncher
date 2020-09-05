@@ -1,3 +1,6 @@
+__0.6.8__
+* Fixed a crash that occured when switching from a modded vanilla profile to another profile without launching the game
+
 __0.6.7__
 * Fixed a crash that could occur when the launcher tried to display a modern popup while the main window wasn't visible
 

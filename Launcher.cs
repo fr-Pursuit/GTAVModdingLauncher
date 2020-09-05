@@ -308,39 +308,52 @@ namespace GTAVModdingLauncher
 		}
 
 		/// <summary>
-		/// Do basic checks to the profile (is modded but supposed to be vanilla, are mods in the wrong directory, ...)
+		/// Called whenever mods are present in the vanilla profile.
+		/// Asks the user if they want to delete the mods, or create a new profile with these mods
+		/// </summary>
+		/// <returns>true if the user chose a valid outcome, false if the user chose to cancel</returns>
+		private bool HandleVanillaMods()
+		{
+			Log.Warn("GTA V is modded, but the vanilla profile is selected!");
+
+			DialogStandardResult result = LocalizedMessage.Show(this.Window, "ModsOnVanilla", "Warn", DialogIcon.Warning, DialogButtons.Yes | DialogButtons.No | DialogButtons.Cancel);
+
+			if(result == DialogStandardResult.Yes)
+			{
+				string name = this.GetNewProfileName();
+
+				Profile profile = new Profile(name);
+				this.Config.Profiles.Add(profile);
+				this.Config.Profile = profile;
+				this.Config.Save();
+				this.UiManager.AddProfile(profile);
+				this.UiManager.UpdateActiveProfile();
+				return true;
+			}
+			else if(result == DialogStandardResult.No)
+			{
+				new PerformJobDialog(this.WorkManager, new DeleteMods()).Show(this.WorkManager);
+				return true;
+			}
+			else return false;
+		}
+
+		/// <summary>
+		/// Ensure the vanilla profile is unmodded, and update the current profile's files
 		/// </summary>
 		/// <returns>true if the game can be launched, false otherwise</returns>
-		public bool CheckCurrentProfile()
+		private bool UpdateCurrentProfile()
 		{
 			Profile currentProfile = this.Config.Profile;
 
 			if(currentProfile.IsVanilla && GameScanner.IsGTAModded())
 			{
-				Log.Warn("GTA V is modded, but the vanilla profile is selected !");
-
-				DialogStandardResult result = LocalizedMessage.Show(this.Window, "ModsOnVanilla", "Warn", DialogIcon.Warning, DialogButtons.Yes | DialogButtons.No | DialogButtons.Cancel);
-
-				if(result == DialogStandardResult.Yes)
-				{
-					string name = this.GetNewProfileName();
-
-					Profile profile = new Profile(name);
-					this.Config.Profiles.Add(profile);
-					this.Config.Profile = profile;
-					this.Config.Save();
-					this.UiManager.AddProfile(profile);
-					this.UiManager.UpdateActiveProfile();
-					return true;
-				}
-				else if(result == DialogStandardResult.No)
-				{
-					new PerformJobDialog(this.WorkManager, new DeleteMods()).Show(this.WorkManager);
-					return true;
-				}
+				if(this.HandleVanillaMods())
+					currentProfile = this.Config.Profile;
 				else return false;
 			}
-			else if(!currentProfile.IsVanilla && Directory.Exists(currentProfile.ExtFolder))
+			
+			if(!currentProfile.IsVanilla && Directory.Exists(currentProfile.ExtFolder))
 			{
 				string path = currentProfile.ExtFolder;
 
@@ -487,13 +500,21 @@ namespace GTAVModdingLauncher
 		/// Change the active profile and move the mods accordingly
 		/// </summary>
 		/// <param name="selected"></param>
-		public void SwitchProfileTo(Profile selected)
+		/// <returns>True if the profile was successfully changed, false otherwise</returns>
+		public bool SwitchProfileTo(Profile selected)
 		{
 			if(this.Config.Profile != selected)
 			{
 				Profile oldProfile = this.Config.Profile;
 
 				this.UiManager.Working = true;
+
+				if(oldProfile.IsVanilla && GameScanner.IsGTAModded())
+				{
+					if(this.HandleVanillaMods())
+						oldProfile = this.Config.Profile;
+					else return false;
+				}
 
 				Log.Info("Switching from profile '" + oldProfile + "' to '" + selected + "'.");
 				this.WorkManager.ProgressDisplay.ProgressState = ProgressState.Indeterminate;
@@ -541,7 +562,9 @@ namespace GTAVModdingLauncher
 
 				this.WorkManager.ProgressDisplay.ProgressState = ProgressState.NoProgress;
 				this.UiManager.Working = false;
+				return true;
 			}
+			else return true;
 		}
 
 		public void LaunchGame(bool online)
@@ -549,7 +572,7 @@ namespace GTAVModdingLauncher
 			Log.Info("Launching game...");
 			Profile profile = this.Config.Profile;
 
-			if(this.CanLaunchGame() && this.CheckCurrentProfile())
+			if(this.CanLaunchGame() && this.UpdateCurrentProfile())
 			{
 				if(online && !profile.IsVanilla)
 				{
