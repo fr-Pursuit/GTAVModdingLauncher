@@ -14,7 +14,6 @@ namespace GTAVModdingLauncher
 		public bool KillLauncher { get; set; } = true;
 		public bool UseRph { get; set; } = true;
 		public bool DeleteLogs { get; set; } = false;
-		public bool OfflineMode { get; set; } = true;
 		public bool CheckUpdates { get; set; } = true;
 		public bool DisplayNews { get; set; } = true;
 		public bool UseLogFile { get; set; } = false;

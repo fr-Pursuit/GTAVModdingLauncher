@@ -1,3 +1,8 @@
+__0.6.9__
+* Fixed a crash that could occur when the option to kill the game's launcher was enabled
+- Legacy compatbility was removed (ie: the launcher doesn't convert old config files anymore)
+- The option to launch modded profiles in offline mode was removed since it doesn't work properly with the new R* launcher
+
 __0.6.8__
 * Fixed a crash that occured when switching from a modded vanilla profile to another profile without launching the game
 

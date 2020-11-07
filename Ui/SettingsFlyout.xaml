@@ -23,7 +23,6 @@
 			<CheckBox Name="KillLauncher" Content="{p:I18n KillLauncher}" Margin="3,5,0,5"/>
 	        <CheckBox Name="UseRph" Content="{p:I18n UseRph}" Margin="3,5,0,5"/>
             <CheckBox Name="Delete" Content="{p:I18n DeleteLogs}" Margin="3,5,0,5"/>
-            <CheckBox Name="Offline" Content="{p:I18n OfflineMode}" Margin="3,5,0,5"/>
             <CheckBox Name="CheckUpdates" Content="{p:I18n CheckUpdates}" Margin="3,5,0,5"/>
 			<CheckBox Name="DisplayNews" Content="{p:I18n DisplayNews}" Margin="3,5,0,5"/>
 			<CheckBox Name="UseLogFile" Content="{p:I18n UseLogFile}" Margin="3,5,0,5"/>

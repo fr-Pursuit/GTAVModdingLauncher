@@ -65,7 +65,6 @@ namespace GTAVModdingLauncher.Ui
 			this.KillLauncher.IsChecked = Launcher.Instance.Config.KillLauncher;
 			this.UseRph.IsChecked = Launcher.Instance.Config.UseRph;
 			this.Delete.IsChecked = Launcher.Instance.Config.DeleteLogs;
-			this.Offline.IsChecked = Launcher.Instance.Config.OfflineMode;
 			this.CheckUpdates.IsChecked = Launcher.Instance.Config.CheckUpdates;
 			this.DisplayNews.IsChecked = Launcher.Instance.Config.DisplayNews;
 			this.UseLogFile.IsChecked = Launcher.Instance.Config.UseLogFile;
@@ -101,7 +100,6 @@ namespace GTAVModdingLauncher.Ui
 			Launcher.Instance.Config.KillLauncher = this.KillLauncher.IsChecked.Value;
 			Launcher.Instance.Config.UseRph = this.UseRph.IsChecked.Value;
 			Launcher.Instance.Config.DeleteLogs = this.Delete.IsChecked.Value;
-			Launcher.Instance.Config.OfflineMode = this.Offline.IsChecked.Value;
 			Launcher.Instance.Config.CheckUpdates = this.CheckUpdates.IsChecked.Value;
 			Launcher.Instance.Config.DisplayNews = this.DisplayNews.IsChecked.Value;
 			Launcher.Instance.Config.UseLogFile = this.UseLogFile.IsChecked.Value;

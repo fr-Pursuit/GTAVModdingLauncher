@@ -113,8 +113,6 @@
     <Compile Include="GameFile.cs" />
     <Compile Include="GTAInstall.cs" />
     <Compile Include="InstallType.cs" />
-    <Compile Include="Legacy\LegacyBinder.cs" />
-    <Compile Include="Legacy\UserSettings.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="Ui\Dialogs\HostDialog.xaml.cs">
       <DependentUpon>HostDialog.xaml</DependentUpon>

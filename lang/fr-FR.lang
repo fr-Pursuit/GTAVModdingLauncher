@@ -23,7 +23,6 @@ ContextMenu.DeleteProfile=Supprimer le profil
 CheckBox.KillLauncher=Fermer le launcher Rockstar après l'ouverture du jeu
 CheckBox.UseRph=Lancer RPH si disponible
 CheckBox.DeleteLogs=Supprimer les logs lors du changement de profil
-CheckBox.OfflineMode=Lancer les profils moddés en mode hors ligne
 CheckBox.CheckUpdates=Vérifier les mises à jour automatiquement
 CheckBox.DisplayNews=Afficher les news du jeu
 CheckBox.UseLogFile=Utiliser un fichier de log

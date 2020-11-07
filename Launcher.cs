@@ -1,5 +1,4 @@
-﻿using GTAVModdingLauncher.Legacy;
-using GTAVModdingLauncher.Ui;
+﻿using GTAVModdingLauncher.Ui;
 using GTAVModdingLauncher.Ui.Dialogs;
 using GTAVModdingLauncher.Work;
 using Newtonsoft.Json;
@@ -56,7 +55,7 @@ namespace GTAVModdingLauncher
 				ResourceManager.RegisterProvider("appRsrc", new PPFFile("Resources.ppf"));
 
 			I18n.Initialize();
-			this.LoadConfig();
+			this.Config = new UserConfig();
 
 			if(this.Config.UseLogFile)
 				Log.LogFile = Path.Combine(this.UserDirectory, "latest.log");
@@ -246,65 +245,6 @@ namespace GTAVModdingLauncher
 				}
 			}
 			else this.Window.Dispatcher.Invoke(() => ShowUpdatePopup(window, obj));
-		}
-
-		private void LoadConfig()
-		{
-			this.Config = new UserConfig();
-
-			//TODO Remove legacy support when not needed anymore
-			string userDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pursuit", "GTA V Modding Launcher");
-
-			if(File.Exists(Path.Combine(userDir, "settings.dat")))
-			{
-				try
-				{
-					Log.Info("Legacy config file found. Converting it...");
-
-					string profilesFolder = Path.Combine(this.UserDirectory, "Profiles");
-					if(!Directory.Exists(profilesFolder))
-						Directory.CreateDirectory(profilesFolder);
-
-					string oldProfiles = userDir;
-
-					using(Stream stream = File.Open(Path.Combine(userDir, "settings.dat"), FileMode.Open))
-					{
-						//Legacy support
-						BinaryFormatter formatter = new BinaryFormatter();
-						formatter.Binder = new LegacyBinder();
-						UserSettings settings = (UserSettings)formatter.Deserialize(stream);
-
-						this.Config.UseRph = settings.UseRph;
-						this.Config.DeleteLogs = settings.DeleteLogs;
-						this.Config.OfflineMode = settings.OfflineMode;
-						this.Config.CheckUpdates = settings.CheckUpdates;
-						this.Config.UseLogFile = settings.UseLogFile;
-						this.Config.Language = settings.Language;
-						this.Config.GtaLanguage = settings.GtaLanguage;
-						this.Config.Save();
-
-						if(settings.CustomFolder != null)
-							oldProfiles = settings.CustomFolder;
-					}
-
-					if(Directory.Exists(oldProfiles))
-					{
-						Log.Info("Legacy profiles found. Moving them...");
-
-						foreach(string dir in Directory.EnumerateDirectories(oldProfiles))
-							this.WorkManager.QueueJob(new MoveJob(dir, Path.Combine(this.UserDirectory, "Profiles", Path.GetFileName(dir))));
-
-						new PerformJobsDialog(this.WorkManager).Show();
-					}
-
-					File.Delete(Path.Combine(userDir, "settings.dat"));
-				}
-				catch(Exception ex)
-				{
-					Log.Error("Unable to read legacy settings.");
-					Log.Error(ex.ToString());
-				}
-			}
 		}
 
 		/// <summary>
@@ -628,8 +568,6 @@ namespace GTAVModdingLauncher
 
 						if(online)
 							builder.AddArgument("-StraightIntoFreemode");
-						else if(!profile.IsVanilla && this.Config.OfflineMode)
-							builder.AddArgument("-scOfflineOnly");
 
 						Log.Info("Executing " + builder);
 						builder.StartProcess();
@@ -643,9 +581,11 @@ namespace GTAVModdingLauncher
 
 							while(true)
 							{
-								if(Process.GetProcessesByName("GTA5").Length > 0)
+								Process[] processes = Process.GetProcessesByName("GTA5");
+
+								if(processes.Length > 0)
 								{
-									Process process = Process.GetProcessesByName("GTA5")[0];
+									Process process = processes[0];
 									if(DateTime.Now - process.StartTime > TimeSpan.FromMilliseconds(GameInitTime))
 									{
 										Log.Info("Closing Rockstar launcher");
