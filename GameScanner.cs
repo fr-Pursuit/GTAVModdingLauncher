@@ -43,16 +43,15 @@ namespace GTAVModdingLauncher
 					return true;
 			}
 
-			if(Directory.Exists(Path.Combine(install.Path, "update\\x64\\dlcpacks")))
+			if (!Directory.Exists(Path.Combine(install.Path, "update\\x64\\dlcpacks"))) { throw new ApplicationException("dlcpacks doesn't exist"); }
+			
+			foreach(string file in Directory.GetFileSystemEntries(Path.Combine(install.Path, "update\\x64\\dlcpacks")))
 			{
-				foreach(string file in Directory.GetFileSystemEntries(Path.Combine(install.Path, "update\\x64\\dlcpacks")))
+				if(Directory.Exists(file))
 				{
-					if(Directory.Exists(file))
-					{
-						string filename = Path.GetFileName(file).ToLower();
-						if(!filename.StartsWith("mp") && !filename.StartsWith("patchday"))
-							return true;
-					}
+					string filename = Path.GetFileName(file).ToLower();
+					if(!filename.StartsWith("mp") && !filename.StartsWith("patchday"))
+						return true;
 				}
 			}
 
@@ -65,27 +64,19 @@ namespace GTAVModdingLauncher
 		public static void ListRootMods(out List<string> files, out List<string> dirs)
 		{
 			GTAInstall install = Launcher.Instance.Config.SelectedInstall;
+			ThrowExIfPathsDontExist(install, false);
+			files = new List<string>();
+			dirs = new List<string>();
 
-			if(install.Path != null)
+			foreach(string file in Directory.EnumerateFileSystemEntries(install.Path))
 			{
-				if(Directory.Exists(install.Path))
+				if(!IsVanillaEntry(Path.GetFileName(file)))
 				{
-					files = new List<string>();
-					dirs = new List<string>();
-
-					foreach(string file in Directory.EnumerateFileSystemEntries(install.Path))
-					{
-						if(!IsVanillaEntry(Path.GetFileName(file)))
-						{
-							if(File.Exists(file))
-								files.Add(file);
-							else dirs.Add(file);
-						}
-					}
+					if(File.Exists(file))
+						files.Add(file);
+					else dirs.Add(file);
 				}
-				else throw new ApplicationException("GtaPath doesn't exist.");
 			}
-			else throw new ApplicationException("GtaPath is not set.");
 		}
 
 		/// <summary>
@@ -94,36 +85,32 @@ namespace GTAVModdingLauncher
 		public static List<string> ListDlcMods()
 		{
 			GTAInstall install = Launcher.Instance.Config.SelectedInstall;
+			ThrowExIfPathsDontExist(install, true);
+			List<string> mods = new List<string>();
 
-			if(install.Path != null)
+			foreach(string file in Directory.GetFileSystemEntries(Path.Combine(install.Path, "update\\x64\\dlcpacks")))
 			{
-				if(Directory.Exists(install.Path))
+				if(Directory.Exists(file))
 				{
-					List<string> mods = new List<string>();
-
-					if(Directory.Exists(Path.Combine(install.Path, "update\\x64\\dlcpacks")))
-					{
-						foreach(string file in Directory.GetFileSystemEntries(Path.Combine(install.Path, "update\\x64\\dlcpacks")))
-						{
-							if(Directory.Exists(file))
-							{
-								string filename = Path.GetFileName(file).ToLower();
-								if(!filename.StartsWith("mp") && !filename.StartsWith("patchday"))
-									mods.Add(file);
-							}
-						}
-					}
-
-					return mods;
+					string filename = Path.GetFileName(file).ToLower();
+					if(!filename.StartsWith("mp") && !filename.StartsWith("patchday"))
+						mods.Add(file);
 				}
-				throw new ApplicationException("GtaPath doesn't exist.");
 			}
-			else throw new ApplicationException("GtaPath is not set.");
+			return mods;
 		}
 
 		private static bool IsVanillaEntry(string name)
 		{
 			return gameManifest.FirstOrDefault(f => (f.Type == null || f.Type.Value == Launcher.Instance.Config.SelectedInstall.Type) && String.Equals(f.Name, name, StringComparison.OrdinalIgnoreCase)) != null;
+		}
+		
+		public static void ThrowExIfPathsDontExist(GTAInstall install, bool includeDlcPacks)
+		{
+			if (install.Path == null) { throw new ApplicationException("GtaPath doesn't exist."); }
+			if (!Directory.Exists(install.Path)) { throw new ApplicationException("GtaPath is not set."); }
+			if (includeDlcPacks)
+				if (!Directory.Exists(Path.Combine(install.Path, "update\\x64\\dlcpacks"))) { throw new ApplicationException("dlcpacks doesn't exist"); } 
 		}
 	}
 }
