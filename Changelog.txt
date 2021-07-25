@@ -2,6 +2,7 @@ __0.7.0__
 * The tool now uses .NET 5
 * Fixed an issue regarding permission propagation
 * Fixed the news display
+* Added "uninstall.exe" to the game manifest
 
 __0.6.9__
 * Fixed a crash that could occur when the option to kill the game's launcher was enabled
