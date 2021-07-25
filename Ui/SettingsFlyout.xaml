@@ -14,11 +14,11 @@
 	    <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6">
             <StackPanel Orientation="Horizontal">
                 <Label Content="{p:I18n Language}" Width="150" VerticalAlignment="Center" />
-                <ComboBox Name="Languages" FontSize="11" Width="175" Height="20" Margin="6"/>
+                <ComboBox Name="Languages" FontSize="11" Width="175" Height="30" Margin="6"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="{p:I18n GtaLanguage}" Width="150" VerticalAlignment="Center" />
-                <ComboBox Name="GtaLanguages" FontSize="11" Width="175" Height="20" Margin="6" />
+                <ComboBox Name="GtaLanguages" FontSize="11" Width="175" Height="30" Margin="6" />
             </StackPanel>
 			<CheckBox Name="KillLauncher" Content="{p:I18n KillLauncher}" Margin="3,5,0,5"/>
 	        <CheckBox Name="UseRph" Content="{p:I18n UseRph}" Margin="3,5,0,5"/>
@@ -27,11 +27,11 @@
 			<CheckBox Name="DisplayNews" Content="{p:I18n DisplayNews}" Margin="3,5,0,5"/>
 			<CheckBox Name="UseLogFile" Content="{p:I18n UseLogFile}" Margin="3,5,0,5"/>
 
-            <m:ToggleSwitch Name="DarkMode" Content="{p:I18n DarkMode}" Margin="6,12,6,12" IsCheckedChanged="UpdateTheme" />
+            <m:ToggleSwitch Name="DarkMode" Content="{p:I18n DarkMode}" Margin="6,12,6,12" Toggled="UpdateTheme" />
 
 			<StackPanel Orientation="Horizontal">
 				<Button Content="{p:I18n ManageInstalls}" HorizontalAlignment="Left" Margin="3" Width="150" Height="30" Click="ManageInstalls"/>
-				<TextBox Name="SelectedVersion" Width="150" Height="23" Margin="20 0 0 0" IsReadOnly="True" IsReadOnlyCaretVisible="True" />
+				<TextBox Name="SelectedVersion" Width="150" Height="30" Margin="20 0 0 0" IsReadOnly="True" IsReadOnlyCaretVisible="True" />
 			</StackPanel>
 
             <Button Content="{p:I18n CheckUpdates}" HorizontalAlignment="Left" Margin="3" Width="150" Height="30" Click="CheckForUpdates"/>

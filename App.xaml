@@ -7,7 +7,6 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="/PursuitLib.Windows.WPF.Modern;component/styles/ModernApp.xaml" />
-				<ResourceDictionary Source="/MahApps.Metro;component/styles/accents/Orange.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>

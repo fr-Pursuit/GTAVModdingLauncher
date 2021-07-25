@@ -11,7 +11,7 @@ namespace GTAVModdingLauncher.Ui
 
 			this.Headline.Text = news.Headline;
 			this.Subtitle.Text = news.Subtitle;
-			this.Content.Text = news.Content;
+			this.NewsContent.Text = news.Content;
 			parent.ImgLoader.LoadAsync(news.Id, this.Image, news.Image);
 		}
 	}

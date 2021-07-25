@@ -18,6 +18,7 @@
 	<GameFile Name="index.bin" />
 	<GameFile Name="NvPmApi.Core.win64.dll" />
 	<GameFile Name="PlayGTAV.exe" />
+	<GameFile Name="uninstall.exe" />
 	<GameFile Name="version.txt" />
 	<GameFile Name="x64a.rpf" />
 	<GameFile Name="x64b.rpf" />

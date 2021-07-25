@@ -26,8 +26,8 @@
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<TextBox Grid.Column="0" Name="InstallPath" Height="20" TextChanged="UpdateSaveButton" />
-					<Button Grid.Column="1" ToolTip="{p:I18n Browse}" IsEnabled="{Binding ButtonsEnabled}" Click="Browse" Height="25" Margin="6">
+					<TextBox Grid.Column="0" Name="InstallPath" Height="30" TextChanged="UpdateSaveButton" />
+					<Button Grid.Column="1" ToolTip="{p:I18n Browse}" IsEnabled="{Binding ButtonsEnabled}" Click="Browse" Width="30" Height="30" Margin="6">
 						<i:PackIconModern Kind="Folder" />
 					</Button>
 				</Grid>

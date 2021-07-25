@@ -15,10 +15,12 @@
 			<StackPanel Margin="3">
 				<AccessText Name="Headline" Text="Headline" FontSize="25" Foreground="White" Margin="6,0,0,0" TextWrapping="WrapWithOverflow"/>
 				<AccessText Name="Subtitle" Text="Subtitle" FontSize="20" Foreground="White" Margin="6,0,0,0" TextWrapping="WrapWithOverflow"/>
-				<AccessText Name="Content" Text="Content" FontSize="15" Foreground="White" Margin="6" TextWrapping="WrapWithOverflow"/>
+				<AccessText Name="NewsContent" Text="Content" FontSize="15" Foreground="White" Margin="6" TextWrapping="WrapWithOverflow"/>
 			</StackPanel>
 		</ScrollViewer>
 
-		<Image Grid.Column="1" Name="Image" RenderOptions.BitmapScalingMode="HighQuality" />
+		<Viewbox Grid.Column="1">
+			<Image Name="Image" Width="431" Height="644" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" />
+		</Viewbox>
 	</Grid>
 </UserControl>

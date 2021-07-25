@@ -13,7 +13,7 @@
 		MinWidth="700"
 		MinHeight="400"
 		Icon="/GTAVModdingLauncher;component/icon.ico"
-		Title="{Binding WindowTitle, FallbackValue='GTA V Modding Launcher'}" Width="900" Height="500">
+		Title="{Binding WindowTitle, FallbackValue='GTA V Modding Launcher'}" Width="1000" Height="500">
 	<pm:ModernWindow.Flyouts>
 		<m:FlyoutsControl>
 			<ui:SettingsFlyout x:Name="Settings" />
@@ -25,7 +25,7 @@
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 
-		<Grid Grid.Column="0" IsEnabled="{Binding UIEnabled}" Background="{DynamicResource GrayBrush8}">
+		<Grid Grid.Column="0" IsEnabled="{Binding UIEnabled}" Background="{DynamicResource MahApps.Brushes.Gray8}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="35" />
 				<RowDefinition />
@@ -34,13 +34,13 @@
 
 			<Label Grid.Row="0" Content="{p:I18n ProfilesList}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" />
 
-			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Background="{DynamicResource WindowBackgroundBrush}">
+			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Background="{DynamicResource MahApps.Brushes.Window.Background}">
 				<pm:ListPanel Name="Profiles" />
 			</ScrollViewer>
 
-			<Border Grid.Row="0" BorderBrush="{DynamicResource GrayBrush3}" BorderThickness="0 0 1 1" />
-			<Border Grid.Row="1" BorderBrush="{DynamicResource GrayBrush3}" BorderThickness="0 0 1 0" />
-			<Border Grid.Row="2" BorderBrush="{DynamicResource GrayBrush3}" BorderThickness="0 1 1 0" />
+			<Border Grid.Row="0" BorderBrush="{DynamicResource MahApps.Brushes.Gray3}" BorderThickness="0 0 1 1" />
+			<Border Grid.Row="1" BorderBrush="{DynamicResource MahApps.Brushes.Gray3}" BorderThickness="0 0 1 0" />
+			<Border Grid.Row="2" BorderBrush="{DynamicResource MahApps.Brushes.Gray3}" BorderThickness="0 1 1 0" />
 
 			<Button Grid.Row="2" Name="CreateButton" ToolTip="{p:I18n CreateProfile}" VerticalAlignment="Top" Width="48" Height="48" Margin="6" Style="{StaticResource CircleButton}">
 				<i:PackIconModern Width="20" Height="20" Kind="Add" />
@@ -55,9 +55,9 @@
 			</StackPanel>
 
 			<StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="6">
-				<Label Foreground="{DynamicResource GrayBrush2}" Padding="0" Content="{Binding LauncherVersion}" HorizontalAlignment="Right" />
-				<Label Foreground="{DynamicResource GrayBrush2}" Padding="0" Content="{Binding GtaVersion}" HorizontalAlignment="Right" />
-				<Label Foreground="{DynamicResource GrayBrush2}" Padding="0" Content="{Binding GtaType}" HorizontalAlignment="Right" />
+				<Label Foreground="{DynamicResource MahApps.Brushes.Gray2}" Padding="0" Content="{Binding LauncherVersion}" HorizontalAlignment="Right" />
+				<Label Foreground="{DynamicResource MahApps.Brushes.Gray2}" Padding="0" Content="{Binding GtaVersion}" HorizontalAlignment="Right" />
+				<Label Foreground="{DynamicResource MahApps.Brushes.Gray2}" Padding="0" Content="{Binding GtaType}" HorizontalAlignment="Right" />
 			</StackPanel>
 		</Grid>
 

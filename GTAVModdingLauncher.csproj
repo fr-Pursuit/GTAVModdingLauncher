@@ -1,309 +1,86 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5EF934D4-B734-4DAE-A62A-04AE2D2D40A4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GTAVModdingLauncher</RootNamespace>
-    <AssemblyName>GTAVModdingLauncher</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Version>0.7.0</Version>
+    <AssemblyVersion>0.7.0.0</AssemblyVersion>
+    <FileVersion>0.7.0</FileVersion>
+    <Description>An alternative Grand Theft Auto V Launcher</Description>
+    <Company>Pursuit</Company>
+    <Product>GTA V Modding Launcher</Product>
+    <Copyright>Copyright © Pursuit 2021</Copyright>
+    <Authors>Pursuit</Authors>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
-    </Reference>
+    <None Remove="app.meta" />
+    <None Remove="icon.ico" />
+    <None Remove="lang\en-US.lang" />
+    <None Remove="lang\fr-FR.lang" />
+    <None Remove="resources\epic.png" />
+    <None Remove="resources\new.png" />
+    <None Remove="resources\retail.png" />
+    <None Remove="resources\steam.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="Properties\DesignTimeResources.xaml" />
+  </ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<None Include="Properties\DesignTimeResources.xaml">
+			<ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="app.meta" />
+	  <EmbeddedResource Include="lang\en-US.lang" />
+	  <EmbeddedResource Include="lang\fr-FR.lang" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.8.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="PursuitLib.Windows.WPF.Modern" Version="*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="GTANews">
-      <HintPath>..\..\..\Libraries\GTANews\bin\Release\GTANews.dll</HintPath>
+      <HintPath>..\..\..\Libraries\GTANews\bin\Release\netstandard2.1\GTANews.dll</HintPath>
     </Reference>
-    <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
-    </Reference>
-    <Reference Include="MahApps.Metro.IconPacks.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
-      <HintPath>packages\MahApps.Metro.IconPacks.Octicons.4.0.0\lib\net47\MahApps.Metro.IconPacks.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MahApps.Metro.IconPacks.Modern, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
-      <HintPath>packages\MahApps.Metro.IconPacks.Modern.4.0.0\lib\net47\MahApps.Metro.IconPacks.Modern.dll</HintPath>
-    </Reference>
-    <Reference Include="MahApps.Metro.IconPacks.Octicons, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
-      <HintPath>packages\MahApps.Metro.IconPacks.Octicons.4.0.0\lib\net47\MahApps.Metro.IconPacks.Octicons.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack">
-      <HintPath>..\..\..\Libraries\WindowsAPICodePack\Core\bin\Release\Microsoft.WindowsAPICodePack.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
-      <HintPath>..\..\..\Libraries\WindowsAPICodePack\Shell\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PursuitLib, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\PursuitLib\PursuitLib\bin\Release\PursuitLib.dll</HintPath>
-    </Reference>
-    <Reference Include="PursuitLib.Windows">
-      <HintPath>..\..\..\Libraries\PursuitLib\PursuitLib.Windows\bin\Release\PursuitLib.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="PursuitLib.Windows.WPF">
-      <HintPath>..\..\..\Libraries\PursuitLib\PursuitLib.Windows.WPF\bin\Release\PursuitLib.Windows.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="PursuitLib.Windows.WPF.Modern">
-      <HintPath>..\..\..\Libraries\PursuitLib\PursuitLib.Windows.WPF.Modern\bin\Release\PursuitLib.Windows.WPF.Modern.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
   </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="GameFile.cs" />
-    <Compile Include="GTAInstall.cs" />
-    <Compile Include="InstallType.cs" />
-    <Compile Include="Profile.cs" />
-    <Compile Include="Ui\Dialogs\HostDialog.xaml.cs">
-      <DependentUpon>HostDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ui\HostWindow.xaml.cs">
-      <DependentUpon>HostWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ui\IHost.cs" />
-    <Compile Include="Ui\NewsBox.xaml.cs">
-      <DependentUpon>NewsBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ui\NewsEntry.xaml.cs">
-      <DependentUpon>NewsEntry.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ui\Dialogs\InstallEntry.cs" />
-    <Compile Include="Ui\Dialogs\ChooseInstallDialog.xaml.cs">
-      <DependentUpon>ChooseInstallDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ui\Dialogs\CustomInstallDialog.xaml.cs">
-      <DependentUpon>CustomInstallDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ui\Dialogs\CreateDialog.xaml.cs">
-      <DependentUpon>CreateDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ui\Dialogs\EditDialog.xaml.cs">
-      <DependentUpon>EditDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ui\SettingsFlyout.xaml.cs">
-      <DependentUpon>SettingsFlyout.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SteamHelper.cs" />
-    <Compile Include="Ui\ProfileEntry.xaml.cs">
-      <DependentUpon>ProfileEntry.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ui\UIManager.cs" />
-    <Compile Include="UserConfig.cs" />
-    <Compile Include="Work\DeleteMods.cs" />
-    <Page Include="Ui\Dialogs\HostDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\HostWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Launcher.cs" />
-    <Compile Include="Ui\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Ui\NewsBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\NewsEntry.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\Dialogs\ChooseInstallDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\Dialogs\CustomInstallDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\Dialogs\CreateDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\Dialogs\EditDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\SettingsFlyout.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ui\ProfileEntry.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="GameScanner.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="app.manifest" />
-    <EmbeddedResource Include="lang\en-US.lang" />
-    <EmbeddedResource Include="lang\fr-FR.lang" />
-    <EmbeddedResource Include="app.meta" />
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
+
   <ItemGroup>
     <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Changelog.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="License.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="libraries\Newtonsoft.Json.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="libraries\Microsoft.WindowsAPICodePack.dll" />
-    <EmbeddedResource Include="libraries\Microsoft.WindowsAPICodePack.Shell.dll" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="resources\epic.png" />
+    <Resource Include="resources\new.png" />
     <Resource Include="resources\retail.png" />
     <Resource Include="resources\steam.png" />
   </ItemGroup>
+
   <ItemGroup>
-    <Resource Include="resources\new.png" />
+    <None Update="GameManifest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="GTAVModdingLauncher.VisualElementsManifest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="License.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources.ppf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="libraries\ControlzEx.dll" />
-    <EmbeddedResource Include="libraries\CSharpImageLibrary.dll" />
-    <EmbeddedResource Include="libraries\GTANews.dll" />
-    <EmbeddedResource Include="libraries\MahApps.Metro.dll" />
-    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.Core.dll" />
-    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.Modern.dll" />
-    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.Octicons.dll" />
-    <EmbeddedResource Include="libraries\PursuitLib.dll" />
-    <EmbeddedResource Include="libraries\PursuitLib.Windows.dll" />
-    <EmbeddedResource Include="libraries\PursuitLib.Windows.WPF.dll" />
-    <EmbeddedResource Include="libraries\PursuitLib.Windows.WPF.Modern.dll" />
-    <EmbeddedResource Include="libraries\System.Threading.Tasks.Dataflow.dll" />
-    <EmbeddedResource Include="libraries\System.Windows.Interactivity.dll" />
-    <EmbeddedResource Include="libraries\UsefulThings.dll" />
+    <Folder Include="data\" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\epic.png" />
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.BoxIcons.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="libraries\MahApps.Metro.IconPacks.Material.dll" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release (
-injectlibloader "C:\Sami\Pursuit\CSharp\Tools\InternalLibLoader\InternalLibLoader\bin\Release\InternalLibLoader.dll" "$(TargetPath)"
-)</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>if $(ConfigurationName) == Release (
-updateinternallibs $(ProjectDir)
-)</PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

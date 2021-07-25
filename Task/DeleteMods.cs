@@ -1,24 +1,20 @@
 ﻿using PursuitLib;
 using PursuitLib.IO;
 using PursuitLib.Windows.WPF.Dialogs;
-using PursuitLib.Work;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using PursuitLib.Threading.Tasks;
 
-namespace GTAVModdingLauncher.Work
+namespace GTAVModdingLauncher.Task
 {
-	public class DeleteMods : Job
+	public class DeleteMods : TaskElement
 	{
-		public override bool Queueable => false;
-		public override long ProgressMaximum => 0;
-
-		public override void Perform(WorkManager manager)
+		public override void Perform()
 		{
 			try
 			{
-				if(manager.ProgressDisplay is IJobDisplay)
-					((IJobDisplay) manager.ProgressDisplay).Description = I18n.Localize("Label", "DeletingMods");
+				this.SendMessage(I18n.Localize("Label", "DeletingMods"));
 
 				GameScanner.ListRootMods(out List<string> files, out List<string> dirs);
 				List<string> dlc = GameScanner.ListDlcMods();

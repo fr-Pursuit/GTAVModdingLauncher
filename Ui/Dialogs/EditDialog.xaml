@@ -18,7 +18,7 @@
 				<Label Name="CaptionLabel" Content="{p:I18n EditDialog}" FontSize="20" Padding="0,6,0,6" />
 				<Rectangle Margin="0,0,0,6" />
 				<Label Name="MainText" Content="{p:I18n ProfileName}" />
-				<TextBox Name="ProfileName" Height="20" />
+				<TextBox Name="ProfileName" Height="30" />
 			</StackPanel>
 		</ScrollViewer>
 

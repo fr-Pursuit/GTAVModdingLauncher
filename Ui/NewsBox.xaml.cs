@@ -1,8 +1,8 @@
-﻿using System;
+﻿using GTANews;
+using PursuitLib.Windows.WPF;
+using System;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using GTANews;
-using PursuitLib.Windows.WPF;
 
 namespace GTAVModdingLauncher.Ui
 {
@@ -28,7 +28,7 @@ namespace GTAVModdingLauncher.Ui
 			if(!this.CycleStarted)
 			{
 				if(this.CheckAccess())
-					Launcher.Instance.WorkManager.StartWork(Initialize);
+					Launcher.Instance.TaskManager.Run(Initialize);
 				else this.Dispatcher.Invoke(StartCycle);
 			}
 		}
@@ -94,8 +94,8 @@ namespace GTAVModdingLauncher.Ui
 				Launcher.Instance.UiManager.NewsVisible = true;
 
 			if(this.next != null)
-				this.Content.Content = this.next;
-			Launcher.Instance.WorkManager.StartWork(LoadNext);
+				this.BoxContent.Content = this.next;
+			Launcher.Instance.TaskManager.Run(LoadNext);
 		}
 
 		public void Dispose()

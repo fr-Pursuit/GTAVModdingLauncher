@@ -1,3 +1,8 @@
+__0.7.0__
+* The tool now uses .NET 5
+* Fixed an issue regarding permission propagation
+* Fixed the news display
+
 __0.6.9__
 * Fixed a crash that could occur when the option to kill the game's launcher was enabled
 - Legacy compatbility was removed (ie: the launcher doesn't convert old config files anymore)

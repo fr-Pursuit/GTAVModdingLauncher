@@ -1,9 +1,15 @@
 # GTAVModdingLauncher
-This is a Grand Theft Auto V launcher that allows us to switch between several modded versions and a vanilla version of the game easily, without taking too much space.
+This is a Grand Theft Auto V launcher that allows us to switch between several modded versions and a vanilla version
+of the game easily, without taking too much space.
 
-MIT License
+# Dependencies
 
-Copyright © 2020 Pursuit
+This tool was built with .NET 5
+Therefore, it needs the .NET 5 runtime to run. You can download it here: https://dotnet.microsoft.com/download/dotnet/5.0
+
+# MIT License
+
+Copyright © 2021 Pursuit
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

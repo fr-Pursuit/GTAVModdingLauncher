@@ -1,0 +1,8 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="/PursuitLib.Windows.WPF.Modern;component/styles/ModernApp.High.xaml" />
+		<ResourceDictionary Source="/PursuitLib.Windows.WPF.Modern;component/styles/themes/Light.xaml" />
+		<ResourceDictionary Source="/PursuitLib.Windows.WPF.Modern;component/styles/themes/Common.xaml" />
+		<ResourceDictionary Source="/MahApps.Metro;component/Styles/Themes/Light.Orange.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

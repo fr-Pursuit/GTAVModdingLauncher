@@ -68,7 +68,7 @@ namespace GTAVModdingLauncher.Ui
 			this.CheckUpdates.IsChecked = Launcher.Instance.Config.CheckUpdates;
 			this.DisplayNews.IsChecked = Launcher.Instance.Config.DisplayNews;
 			this.UseLogFile.IsChecked = Launcher.Instance.Config.UseLogFile;
-			this.DarkMode.IsChecked = Launcher.Instance.Config.Theme == PTheme.Dark;
+			this.DarkMode.IsOn = Launcher.Instance.Config.Theme == PTheme.Dark;
 			this.SelectedVersion.Text = Launcher.Instance.Config.SelectedInstall?.Path;
 		}
 
@@ -165,7 +165,7 @@ namespace GTAVModdingLauncher.Ui
 
 		private void UpdateTheme(object sender, EventArgs e)
 		{
-			Launcher.Instance.Config.Theme = this.DarkMode.IsChecked.Value ? PTheme.Dark : PTheme.Light;
+			Launcher.Instance.Config.Theme = this.DarkMode.IsOn ? PTheme.Dark : PTheme.Light;
 			Launcher.Instance.Theme = Launcher.Instance.Config.Theme;
 		}
 	}

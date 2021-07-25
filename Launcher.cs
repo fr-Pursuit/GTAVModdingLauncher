@@ -1,17 +1,17 @@
 ﻿using GTAVModdingLauncher.Ui;
 using GTAVModdingLauncher.Ui.Dialogs;
-using GTAVModdingLauncher.Work;
+using GTAVModdingLauncher.Task;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PursuitLib;
 using PursuitLib.Extensions;
 using PursuitLib.IO;
 using PursuitLib.IO.PPF;
+using PursuitLib.Threading.Tasks;
 using PursuitLib.Windows;
 using PursuitLib.Windows.WPF;
 using PursuitLib.Windows.WPF.Dialogs;
 using PursuitLib.Windows.WPF.Modern;
-using PursuitLib.Work;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +19,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
@@ -41,6 +40,10 @@ namespace GTAVModdingLauncher
 		public MainWindow Window { get; private set; } = null;
 		public UserConfig Config { get; private set; }
 		public UIManager UiManager { get; private set; }
+		public ProgressManager ProgressManager { get; private set; }
+
+
+		private bool windowInitialized = false;
 
 		/// <summary>
 		/// Indicates if the user chose to close the application. <see cref="CloseLauncher"/> <seealso cref="OnWindowClosing"/>
@@ -77,6 +80,7 @@ namespace GTAVModdingLauncher
 			Log.Info("Initializing user interface...");
 			this.Window = window;
 			this.Window.EnsureFitsScreen();
+			this.Window.Activated += OnWindowActivated;
 			this.Window.Closing += OnWindowClosing;
 			this.Window.Closed += OnWindowClosed;
 			this.Window.AboutButton.Click += ShowAboutPopup;
@@ -84,7 +88,9 @@ namespace GTAVModdingLauncher
 			this.Window.CreateButton.Click += (s, a) => new CreateDialog(this.Window).Show();
 			this.UiManager = new UIManager(this.Window);
 			this.UiManager.WindowTitle = this.DisplayName;
-			this.WorkManager.ProgressDisplay = new MultiProgressDisplay((WPFProgressBar)this.Window.Progress, new TaskBarProgress());
+
+			this.ProgressManager = new ProgressManager(this.TaskManager);
+			this.ProgressManager.AddMonitor((WPFProgressBar)this.Window.Progress);
 
 			this.Theme = this.Config.Theme;
 			this.InitLauncher();
@@ -100,7 +106,7 @@ namespace GTAVModdingLauncher
 			if(this.Config.DisplayNews)
 				this.Window.News.StartCycle();
 			if(this.Config.CheckUpdates)
-				this.WorkManager.StartWork(CheckUpdates);
+				this.TaskManager.Run(CheckUpdates);
 		}
 
 		private void InitLauncher()
@@ -202,23 +208,21 @@ namespace GTAVModdingLauncher
 				HttpWebRequest request = WebRequest.CreateHttp("https://api.github.com/repos/fr-Pursuit/GTAVModdingLauncher/releases/latest");
 				request.UserAgent = "GTAVModdingLauncher-" + Version;
 
-				using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+				using HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+
+				if(response.StatusCode == HttpStatusCode.OK)
 				{
-					if(response.StatusCode == HttpStatusCode.OK)
+					using StreamReader streamReader = new StreamReader(response.GetResponseStream());
+					using JsonReader reader = new JsonTextReader(streamReader);
+					JObject obj = JObject.Load(reader);
+
+					if(new Version(obj["tag_name"].ToString()) > Version)
 					{
-						using(StreamReader streamReader = new StreamReader(response.GetResponseStream()))
-						using(JsonReader reader = new JsonTextReader(streamReader))
-						{
-							JObject obj = JObject.Load(reader);
-							if(new Version(obj["tag_name"].ToString()) > Version)
-							{
-								Log.Info("New update found (" + obj["name"] + ')');
-								return obj;
-							}
-						}
+						Log.Info("New update found (" + obj["name"] + ')');
+						return obj;
 					}
-					else Log.Warn("Unable to check for updates. Response code was " + response.StatusCode + " (" + response.StatusDescription + ')');
 				}
+				else Log.Warn("Unable to check for updates. Response code was " + response.StatusCode + " (" + response.StatusDescription + ')');
 			}
 			catch(Exception e)
 			{
@@ -240,7 +244,7 @@ namespace GTAVModdingLauncher
 			{
 				if(MessageDialog.Show(window, I18n.Localize("Dialog", "Update", obj["name"], obj["body"].ToString().Replace("\\", "")), I18n.Localize("Dialog.Caption", "Update"), DialogIcon.Information, DialogButtons.Yes | DialogButtons.No) == DialogStandardResult.Yes)
 				{
-					Process.Start(obj["assets"][0]["browser_download_url"].ToString());
+					ProcessUtil.Execute(obj["assets"][0]["browser_download_url"].ToString());
 					this.CloseLauncher();
 				}
 			}
@@ -272,7 +276,7 @@ namespace GTAVModdingLauncher
 			}
 			else if(result == DialogStandardResult.No)
 			{
-				new PerformJobDialog(this.WorkManager, new DeleteMods()).Show(this.WorkManager);
+				new PerformTaskDialog(this.ProgressManager, new DeleteMods()).Show(this.ProgressManager);
 				return true;
 			}
 			else return false;
@@ -306,18 +310,22 @@ namespace GTAVModdingLauncher
 						GameScanner.ListRootMods(out List<string> modFiles, out List<string> modDirs);
 						List<string> dlcMods = GameScanner.ListDlcMods();
 
+						TaskSequence sequence = new TaskSequence();
+
 						foreach(string dir in modDirs)
-							this.WorkManager.QueueJob(new MoveJob(dir, Path.Combine(path, IOUtil.GetRelativePath(dir, this.Config.SelectedInstall.Path))));
+						{
+							sequence.AddTask(new MoveTask(dir, Path.Combine(path, IOUtil.GetRelativePath(dir, this.Config.SelectedInstall.Path))));
+						}
 						foreach(string file in modFiles)
 						{
 							if(this.Config.DeleteLogs && file.EndsWith(".log"))
-								this.WorkManager.QueueJob(new DeleteJob(file));
-							else this.WorkManager.QueueJob(new MoveJob(file, Path.Combine(path, IOUtil.GetRelativePath(file, this.Config.SelectedInstall.Path))));
+								sequence.AddTask(new DeleteTask(file));
+							else sequence.AddTask(new MoveTask(file, Path.Combine(path, IOUtil.GetRelativePath(file, this.Config.SelectedInstall.Path))));
 						}
 						foreach(string mod in dlcMods)
-							this.WorkManager.QueueJob(new MoveJob(mod, Path.Combine(path, IOUtil.GetRelativePath(mod, this.Config.SelectedInstall.Path))));
+							sequence.AddTask(new MoveTask(mod, Path.Combine(path, IOUtil.GetRelativePath(mod, this.Config.SelectedInstall.Path))));
 
-						new PerformJobsDialog(this.WorkManager).Show();
+						new PerformTaskDialog(this.ProgressManager, sequence).Show();
 					}
 				}
 
@@ -396,7 +404,7 @@ namespace GTAVModdingLauncher
 
 				foreach(FileSystemAccessRule rule in sec.GetAccessRules(true, true, typeof(SecurityIdentifier)))
 				{
-					if(rule.IdentityReference == id && rule.FileSystemRights == FileSystemRights.FullControl && rule.AccessControlType == AccessControlType.Allow)
+					if(rule.IdentityReference == id && rule.FileSystemRights == FileSystemRights.FullControl && rule.InheritanceFlags == (InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit) && rule.AccessControlType == AccessControlType.Allow)
 					{
 						hasPerms = true;
 						break;
@@ -410,7 +418,7 @@ namespace GTAVModdingLauncher
 					if(User.HasElevatedPrivileges)
 					{
 						Log.Info("The launcher is running with elevated privileges. Getting full control...");
-						sec.SetAccessRule(new FileSystemAccessRule(id, FileSystemRights.FullControl, AccessControlType.Allow));
+						sec.SetAccessRule(new FileSystemAccessRule(id, FileSystemRights.FullControl, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow));
 						dir.SetAccessControl(sec);
 					}
 					else
@@ -419,7 +427,8 @@ namespace GTAVModdingLauncher
 
 						if(LocalizedCMessage.Show(this.Window, "LauncherNeedsPerms", "Info", DialogIcon.Shield, new DialogButton("Ok", true), "Cancel") == "Ok")
 						{
-							ProcessBuilder builder = new ProcessBuilder(Assembly.GetEntryAssembly().Location);
+							ProcessBuilder builder = new ProcessBuilder(Process.GetCurrentProcess().MainModule.FileName);
+							builder.UseShell = true;
 							builder.LaunchAsAdmin = true;
 							builder.StartProcess();
 						}
@@ -457,10 +466,11 @@ namespace GTAVModdingLauncher
 				}
 
 				Log.Info("Switching from profile '" + oldProfile + "' to '" + selected + "'.");
-				this.WorkManager.ProgressDisplay.ProgressState = ProgressState.Indeterminate;
 
 				try
 				{
+					TaskSequence sequence = new TaskSequence();
+
 					if(!oldProfile.IsVanilla)
 					{
 						string profilePath = oldProfile.ExtFolder;
@@ -468,15 +478,15 @@ namespace GTAVModdingLauncher
 						List<string> dlcMods = GameScanner.ListDlcMods();
 
 						foreach(string dir in modDirs)
-							this.WorkManager.QueueJob(new MoveJob(dir, Path.Combine(profilePath, IOUtil.GetRelativePath(dir, this.Config.SelectedInstall.Path))));
+							sequence.AddTask(new MoveTask(dir, Path.Combine(profilePath, IOUtil.GetRelativePath(dir, this.Config.SelectedInstall.Path))));
 						foreach(string file in modFiles)
 						{
 							if(this.Config.DeleteLogs && file.EndsWith(".log"))
-								this.WorkManager.QueueJob(new DeleteJob(file));
-							else this.WorkManager.QueueJob(new MoveJob(file, Path.Combine(profilePath, IOUtil.GetRelativePath(file, this.Config.SelectedInstall.Path))));
+								sequence.AddTask(new DeleteTask(file));
+							else sequence.AddTask(new MoveTask(file, Path.Combine(profilePath, IOUtil.GetRelativePath(file, this.Config.SelectedInstall.Path))));
 						}
 						foreach(string mod in dlcMods)
-							this.WorkManager.QueueJob(new MoveJob(mod, Path.Combine(profilePath, IOUtil.GetRelativePath(mod, this.Config.SelectedInstall.Path))));
+							sequence.AddTask(new MoveTask(mod, Path.Combine(profilePath, IOUtil.GetRelativePath(mod, this.Config.SelectedInstall.Path))));
 					}
 
 					if(!selected.IsVanilla)
@@ -484,10 +494,10 @@ namespace GTAVModdingLauncher
 						string profilePath = selected.ExtFolder;
 
 						foreach(string entry in Directory.GetFileSystemEntries(profilePath))
-							this.WorkManager.QueueJob(new MoveJob(entry, Path.Combine(this.Config.SelectedInstall.Path, Path.GetFileName(entry))));
+							sequence.AddTask(new MoveTask(entry, Path.Combine(this.Config.SelectedInstall.Path, Path.GetFileName(entry))));
 					}
 
-					this.WorkManager.PerformJobs();
+					this.ProgressManager.Run(sequence);
 
 					this.Config.Profile = selected;
 					this.Config.Save();
@@ -500,7 +510,6 @@ namespace GTAVModdingLauncher
 					Process.GetCurrentProcess().Kill();
 				}
 
-				this.WorkManager.ProgressDisplay.ProgressState = ProgressState.NoProgress;
 				this.UiManager.Working = false;
 				return true;
 			}
@@ -632,6 +641,15 @@ namespace GTAVModdingLauncher
 			else Application.Current.Dispatcher.Invoke(Application.Current.Shutdown);
 		}
 
+		private void OnWindowActivated(object sender, EventArgs e)
+		{
+			if(!this.windowInitialized)
+			{
+				this.ProgressManager.AddMonitor(new TaskBarProgress());
+				this.windowInitialized = true;
+			}
+		}
+
 		private void ShowAboutPopup(object sender, EventArgs e)
 		{
 			MessageDialog.Show(this.Window, I18n.Localize("Dialog", "About", this.Version), I18n.Localize("Dialog.Caption", "About"), DialogIcon.Information, DialogButtons.Ok);
@@ -682,7 +700,7 @@ namespace GTAVModdingLauncher
 
 		private void OnWindowClosing(object sender, CancelEventArgs e)
 		{
-			if(!this.closeRequested && this.WorkManager.IsWorking)
+			if(!this.closeRequested && this.ProgressManager.HasAnyTask)
 			{
 				e.Cancel = true;
 				LocalizedMessage.Show(this.Window, "LauncherWorking", "Impossible", DialogIcon.Information, DialogButtons.Ok);

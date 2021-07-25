@@ -1,11 +1,10 @@
 ﻿using PursuitLib;
 using PursuitLib.IO;
+using PursuitLib.Windows.WPF.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using PursuitLib.Windows.WPF.Dialogs;
 
 namespace GTAVModdingLauncher
 {

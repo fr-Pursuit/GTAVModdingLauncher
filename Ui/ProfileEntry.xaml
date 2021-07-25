@@ -6,7 +6,6 @@
              xmlns:m="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 			 xmlns:i="http://metro.mahapps.com/winfx/xaml/iconpacks"
 			 xmlns:pm="clr-namespace:PursuitLib.Windows.WPF.Modern;assembly=PursuitLib.Windows.WPF.Modern"
-			 xmlns:p="clr-namespace:PursuitLib.Windows.WPF;assembly=PursuitLib.Windows.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 	<Grid>
@@ -15,7 +14,7 @@
 			<ColumnDefinition Width="40" />
 		</Grid.ColumnDefinitions>
 
-		<m:Tile Grid.Column="0" Name="Tile" Width="Auto" Height="Auto" Click="LaunchProfile" Background="Transparent" m:ControlsHelper.MouseOverBorderBrush="{DynamicResource GrayBrush3}" HorizontalContentAlignment="Left" VerticalContentAlignment="Center">
+		<m:Tile Grid.Column="0" Name="Tile" Width="Auto" Height="Auto" Click="LaunchProfile" Background="Transparent" m:ControlsHelper.MouseOverBorderBrush="{DynamicResource MahApps.Brushes.Gray3}" HorizontalContentAlignment="Left" VerticalContentAlignment="Center">
 			<StackPanel Orientation="Horizontal">
 				<Label Name="Icon" Margin="6,6,0,6">
 					<i:Octicons Kind="Play" Width="20" Height="20" />
@@ -24,6 +23,6 @@
 			</StackPanel>
 		</m:Tile>
 
-		<pm:Grabber Name="MoveButton" Grid.Column="1" Width="16" Height="16" Foreground="{DynamicResource GrayBrush1}" />
+		<pm:Grabber Name="MoveButton" Grid.Column="1" Width="16" Height="16" Foreground="{DynamicResource MahApps.Brushes.Gray1}" />
 	</Grid>
 </UserControl>

@@ -1,5 +1,5 @@
 ﻿using GTAVModdingLauncher.Ui.Dialogs;
-using GTAVModdingLauncher.Work;
+using GTAVModdingLauncher.Task;
 using PursuitLib;
 using PursuitLib.Extensions;
 using PursuitLib.IO;
@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using PursuitLib.Windows;
 
 namespace GTAVModdingLauncher.Ui
 {
@@ -83,12 +84,12 @@ namespace GTAVModdingLauncher.Ui
 		{
 			if(Launcher.Instance.Config.Profile == this.profile)
 			{
-				this.Icon.SetResourceReference(ForegroundProperty, "HighlightBrush");
+				this.Icon.SetResourceReference(ForegroundProperty, "MahApps.Brushes.AccentBase");
 				this.openFolder.IsEnabled = true;
 			}
 			else
 			{
-				this.Icon.SetResourceReference(ForegroundProperty, "BlackBrush");
+				this.Icon.SetResourceReference(ForegroundProperty, "MahApps.Brushes.ThemeForeground");
 				this.openFolder.IsEnabled = !this.profile.IsVanilla;
 			}
 		}
@@ -105,7 +106,7 @@ namespace GTAVModdingLauncher.Ui
 
 			Launcher.Instance.UiManager.UIEnabled = false;
 
-			Launcher.Instance.WorkManager.StartWork(() =>
+			Launcher.Instance.TaskManager.Run(() =>
 			{
 				if(Launcher.Instance.Config.Profile == this.profile || Launcher.Instance.SwitchProfileTo(this.profile))
 					Launcher.Instance.LaunchGame(false);
@@ -114,7 +115,7 @@ namespace GTAVModdingLauncher.Ui
 
 		private void SetActive(object sender, RoutedEventArgs e)
 		{
-			Launcher.Instance.WorkManager.StartWork(() =>
+			Launcher.Instance.TaskManager.Run(() =>
 			{
 				Launcher.Instance.UiManager.UIEnabled = false;
 				Launcher.Instance.SwitchProfileTo(this.profile);
@@ -125,7 +126,9 @@ namespace GTAVModdingLauncher.Ui
 		private void OpenFolder(object sender, RoutedEventArgs e)
 		{
 			if(Launcher.Instance.Config.Profile == this.profile)
-				Process.Start(Launcher.Instance.Config.SelectedInstall.Path);
+			{
+				ProcessUtil.Execute(Launcher.Instance.Config.SelectedInstall.Path);
+			}
 			else if(!this.profile.IsVanilla)
 			{
 				string path = Path.Combine(Launcher.Instance.UserDirectory, "Profiles", this.profile.Name);
@@ -133,7 +136,7 @@ namespace GTAVModdingLauncher.Ui
 				if(!Directory.Exists(path))
 					Directory.CreateDirectory(path);
 
-				Process.Start(path);
+				ProcessUtil.Execute(path);
 			}
 		}
 
@@ -153,7 +156,7 @@ namespace GTAVModdingLauncher.Ui
 
 					if(Launcher.Instance.Config.CurrentProfile.Equals(this.profile.Name, StringComparison.OrdinalIgnoreCase))
 					{
-						new PerformJobDialog(Launcher.Instance.WorkManager, new DeleteMods()).Show(Launcher.Instance.WorkManager);
+						new PerformTaskDialog(Launcher.Instance.ProgressManager, new DeleteMods()).Show(Launcher.Instance.ProgressManager);
 						Launcher.Instance.Config.Profile = Launcher.Instance.Config.VanillaProfile;
 						Launcher.Instance.UiManager.UpdateActiveProfile();
 					}
