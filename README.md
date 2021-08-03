@@ -5,7 +5,7 @@ of the game easily, without taking too much space.
 # Dependencies
 
 This tool was built with .NET 5
-Therefore, it needs the .NET 5 runtime to run. You can download it here: https://dotnet.microsoft.com/download/dotnet/5.0
+Therefore, it needs the .NET 5 *Desktop* runtime to run. You can download it here: https://dotnet.microsoft.com/download/dotnet/5.0
 
 # MIT License
 

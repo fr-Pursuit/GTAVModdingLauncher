@@ -49,4 +49,7 @@
 	<GameFile Name="installscript.vdf" SteamOnly="true" />
 	<GameFile Name="steam_api64.dll" SteamOnly="true" />
 	<GameFile Name="steam_appid.txt" SteamOnly="true" />
+
+	<GameFile Name=".egstore" EpicOnly="true" />
+	<GameFile Name="EOSSDK-Win64-Shipping.dll" EpicOnly="true" />
 </List>

@@ -1,3 +1,6 @@
+__0.7.1__
+* Added .egstore and EOSSDK-Win64-Shipping.dll to the game manifest
+
 __0.7.0__
 * The tool now uses .NET 5
 * Fixed an issue regarding permission propagation
