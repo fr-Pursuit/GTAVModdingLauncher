@@ -532,6 +532,7 @@ namespace GTAVModdingLauncher
 				else
 				{
 					ProcessBuilder builder = new ProcessBuilder();
+					builder.UseShell = true;
 					builder.WorkingDirectory = this.Config.SelectedInstall.Path;
 
 					if(this.Config.UseRph && this.Config.SelectedInstall.Type != InstallType.Epic && File.Exists(Path.Combine(this.Config.SelectedInstall.Path, "RAGEPluginHook.exe")))

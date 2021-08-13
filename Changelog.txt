@@ -1,3 +1,6 @@
+__0.7.2__
+* Fixed a bug that prevented the launcher from launching the Epic Games version of the game
+
 __0.7.1__
 * Added .egstore and EOSSDK-Win64-Shipping.dll to the game manifest
 
