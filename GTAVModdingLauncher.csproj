@@ -46,7 +46,7 @@
 
   <ItemGroup>
     <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.8.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="PursuitLib.Windows.WPF.Modern" Version="*" />
   </ItemGroup>
 
