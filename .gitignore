@@ -242,3 +242,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+# Ignore IDEA files
+.idea/

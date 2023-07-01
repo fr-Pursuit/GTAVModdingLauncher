@@ -4,13 +4,13 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>0.7.2</Version>
-    <AssemblyVersion>0.7.2.0</AssemblyVersion>
-    <FileVersion>0.7.2</FileVersion>
+    <Version>0.7.3</Version>
+    <AssemblyVersion>0.7.3.0</AssemblyVersion>
+    <FileVersion>0.7.3</FileVersion>
     <Description>An alternative Grand Theft Auto V Launcher</Description>
     <Company>Pursuit</Company>
     <Product>GTA V Modding Launcher</Product>
-    <Copyright>Copyright © Pursuit 2021</Copyright>
+    <Copyright>Copyright © 2023 Pursuit</Copyright>
     <Authors>Pursuit</Authors>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -19,8 +19,7 @@
   <ItemGroup>
     <None Remove="app.meta" />
     <None Remove="icon.ico" />
-    <None Remove="lang\en-US.lang" />
-    <None Remove="lang\fr-FR.lang" />
+    <None Remove="lang\*.lang" />
     <None Remove="resources\epic.png" />
     <None Remove="resources\new.png" />
     <None Remove="resources\retail.png" />
@@ -40,14 +39,16 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="app.meta" />
-	  <EmbeddedResource Include="lang\en-US.lang" />
-	  <EmbeddedResource Include="lang\fr-FR.lang" />
+	  <EmbeddedResource Include="lang\*.lang" />
 	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.8.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="PursuitLib.Windows.WPF.Modern" Version="*" />
+    <PackageReference Include="PursuitLib" Version="0.18.10" />
+    <PackageReference Include="PursuitLib.Windows" Version="0.18.11" />
+    <PackageReference Include="PursuitLib.Windows.WPF" Version="0.18.14" />
+    <PackageReference Include="PursuitLib.Windows.WPF.Modern" Version="0.18.16" />
   </ItemGroup>
 
   <ItemGroup>
