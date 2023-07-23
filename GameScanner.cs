@@ -107,7 +107,7 @@ namespace GTAVModdingLauncher
 							if(Directory.Exists(file))
 							{
 								string filename = Path.GetFileName(file).ToLower();
-								if(!filename.StartsWith("mp") && !filename.StartsWith("patchday"))
+								if(!filename.StartsWith("mp") && !filename.StartsWith("patch"))
 									mods.Add(file);
 							}
 						}

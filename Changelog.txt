@@ -1,3 +1,6 @@
+__0.7.4__
+* Fixed a bug that made the launcher believe a vanilla DLC pack from the "Mercenaries" DLC was modded 
+
 __0.7.3__
 * Fixed a bug that made the launcher believe a vanilla DLC pack from the "Mercenaries" DLC was modded (Thanks to SirMallard)
 + Added the Russian language (Thanks to VALKREE)
