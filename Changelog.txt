@@ -1,3 +1,6 @@
+__0.7.6__
+* Fixed a typo that prevented the new vanilla game files from being taken into account
+
 __0.7.5__
 * Added new files to the list of vanilla game files (Thanks to SirMallard)
 
