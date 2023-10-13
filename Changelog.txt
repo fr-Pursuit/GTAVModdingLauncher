@@ -1,3 +1,6 @@
+__0.7.5__
+* Added new files to the list of vanilla game files (Thanks to SirMallard)
+
 __0.7.4__
 * Fixed a bug that made the launcher believe a vanilla DLC pack from the "Mercenaries" DLC was modded 
 
