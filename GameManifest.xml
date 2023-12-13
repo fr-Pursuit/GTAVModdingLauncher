@@ -49,10 +49,12 @@
 	<GameFile Name="x64u.rpf" />
 	<GameFile Name="x64v.rpf" />
 	<GameFile Name="x64w.rpf" />
+	<GameFile Name="title.rgl" />
 	
 	<GameFile Name="_commonredist" SteamOnly="true" />
 	<GameFile Name="installers" SteamOnly="true" />
 	<GameFile Name="installscript.vdf" SteamOnly="true" />
+	<GameFile Name="installscript_sdk.vdf" SteamOnly="true" />
 	<GameFile Name="steam_api64.dll" SteamOnly="true" />
 	<GameFile Name="steam_appid.txt" SteamOnly="true" />
 
