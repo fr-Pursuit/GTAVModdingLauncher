@@ -9,7 +9,7 @@ Therefore, it needs the .NET 5 *Desktop* runtime to run. You can download it her
 
 # MIT License
 
-Copyright © 2021 Pursuit
+Copyright © 2024 Pursuit
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

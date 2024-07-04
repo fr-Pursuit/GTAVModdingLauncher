@@ -1,3 +1,6 @@
+__0.7.8__
+* Added libtox.dll to the list of vanilla game files
+
 __0.7.7__
 * Added new files to the list of vanilla game files (Thanks to @octylFractal)
 
