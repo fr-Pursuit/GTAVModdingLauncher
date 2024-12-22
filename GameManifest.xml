@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <List xmlns:m="meta">
+    <GameFile Name="BattlEye" />
 	<GameFile Name="ReadMe" />
 	<GameFile Name="Redistributables" />
 	<GameFile Name="update" />
 	<GameFile Name="x64" />
 	<GameFile Name="bink2w64.dll" />
+    <GameFile Name="commandline.txt" />
 	<GameFile Name="common.rpf" />
 	<GameFile Name="d3dcompiler_46.dll" />
 	<GameFile Name="d3dcsx_46.dll" />
@@ -20,6 +22,7 @@
 	<GameFile Name="toxmod.dll" />
 	<GameFile Name="zlib1.dll" />
 	<GameFile Name="GTA5.exe" />
+    <GameFile Name="GTA5_BE.exe" />
 	<GameFile Name="GTAVLanguageSelect.exe" />
 	<GameFile Name="GTAVLauncher.exe" />
 	<GameFile Name="index.bin" />
